@@ -16,18 +16,20 @@ The basic compoenents of my code so far are:
     you can specify a dont_consider file to ignore certain results from the filter."""
 
 
-#First you create a trajectory object, traj1.
-#Note, you can read entire trajectories (like with traj2) but this takes a lot more time (X1000) so I commented it out.
-traj1 = TRAJECTORY("frame1.pdb")
-#traj2 = TRAJECTORY("150mM_2000_3000.pdb")
+#First you create a trajectory object, traj.
+#Note, you can read entire trajectories (like with traj2) but this takes a lot of time so I commented it out
+traj = TRAJECTORY("150mM_2000_3000.pdb")
+
+#You can also create a complex if you don't want to deal with a trajectory
+cmplx = COMPLEX("6ta4.pdb")
 
 #Once you have a trajectory, you need to specify what frame to read. I am reading frame 0 here. Doing so outputs a complex.
-cmplx1 = traj1[0]
+cmplx1 = traj[0]
 
 #Once you have a complex, you can specify what chains to apply a distance to.
 #For example, the following line uses the centroid distance (centroid_dist)
 # defined in distances to find all residues which are 7 angstroms apart 
-centroid1  = within_dist(cmplx1, "A", "K", 7, centroid_dist)
+centroid1  = within_dist(cmplx, "A", "K", 7, centroid_dist)
 
 #From these results, you can filter those pairs which are likely to be good
 #candidates for mutations. Specifically, we care about those pairs for which one

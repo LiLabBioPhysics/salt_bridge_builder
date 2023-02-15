@@ -1,0 +1,10 @@
+prefix,number,letter,group_letter,group_number,PDB,Complex,Resolution
+HsKIF,5,B,N,1.0,1,1.0,1.0
+HsKIF,20,A,N,6.0,1,1.0,1.0
+HsKIF,7,,,,1,1.0,1.0
+HsKIF,11,,N,2.0,1,1.0,1.0
+HsKIF,2,C,M,,1,1.0,1.0
+HsKIF,2,A,M,,1,1.0,1.0
+HsKIF,15,,N,10.0,1,1.0,1.0
+HsKIF,2,C,C,,1,1.0,1.0
+HsKIF,18,A,N,8.0,1,1.0,1.0

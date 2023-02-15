@@ -107,11 +107,21 @@ class COMPLEX:
     def __getitem__(self, key):
         return self.chains[key]
 
-    def __init__(self, frame_data):
+    def __init__(self, pdbfile=None, frame_data=None):
 
         self.chains = dict()
         self.chainnames = self.chains.keys()
 
+        if pdbfile is not None:
+            data_clean = []
+            with open(pdbfile, "r") as f:
+                data = f.readlines()
+            for line in data:
+                cur_line = line.split()
+                if cur_line[0] == "ATOM":
+                    data_clean.append(cur_line[1:9])
+            frame_data = data_clean
+   
         for line in frame_data:
             atomnum = int(line[0])
             atomtype = line[1]
@@ -139,8 +149,6 @@ class COMPLEX:
 
             self.chains[chainname].residues[resnum].add_atom(cur_atom, atomnum)
 
-                
-    
 class TRAJECTORY:
     def read_start_points(self, multipdbfile: str):
         count = 1
@@ -180,7 +188,7 @@ class TRAJECTORY:
         return atoms
 
 
-    def __init__(self, multipdbfile:str, complexname = None) -> None:
+    def __init__(self, multipdbfile:str) -> None:
         self.filename = multipdbfile
         self.start_points = self.read_start_points(multipdbfile)
         self.frame = 0
@@ -188,7 +196,7 @@ class TRAJECTORY:
 
 
     def add_complex(self, data):
-        self.complex = COMPLEX(data)
+        self.complex = COMPLEX(frame_data = data)
         
     def __len__(self):
         return len(self.start_points)
@@ -201,7 +209,3 @@ class TRAJECTORY:
             self.frame = key
             self.add_complex(self.read_frame(key))
             return self.complex
-    
-
-
-    

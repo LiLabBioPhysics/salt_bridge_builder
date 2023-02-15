@@ -1,1 +1,1 @@
-*.pdb filter=lfs diff=lfs merge=lfs -text
+150mM_2000_3000.pdb filter=lfs diff=lfs merge=lfs -text
