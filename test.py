@@ -3,9 +3,6 @@ from distances import *
 from filters import *
 import pandas as pd
 
-
-
-
 """This is a file which shows how to use my code.
 The basic compoenents of my code so far are:
 1. A structure file (structure.py) defining proteins and/or trajectories
@@ -14,7 +11,6 @@ The basic compoenents of my code so far are:
 3. A filter file (filters.py) which can be used to filter results by whether
     or not the residue pair might be a good candiate for mutation. Optionally,
     you can specify a dont_consider file to ignore certain results from the filter."""
-
 
 #First you create a trajectory object, traj.
 #Note, you can read entire trajectories (like with traj2) but this takes a lot of time so I commented it out
