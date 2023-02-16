@@ -8,6 +8,7 @@ class ATOM:
 class RESIDUE:
     CTERATOMS = {"C"}
     NTERATOMS = {"HN", "N", "HT3"}
+    ALPHAATOM = "CA"
 
     def __init__(self):
         self.name = None
@@ -17,6 +18,7 @@ class RESIDUE:
         self.atomcount = 0
         self.atommap = dict()
         self.sideatoms = dict()
+        self.alpha = None
 
     def add_atom(self, atom: ATOM, aposition: int):
         self.atoms[aposition] = atom
@@ -25,6 +27,12 @@ class RESIDUE:
 
     def __getitem__(self, key):
         return self.atoms[self.atommap[key]]
+    
+    def get_alpha(self):
+        for i in range(self.atomcount, 0, -1):
+            if self.atoms[self.atommap[i]].type == self.ALPHAATOM:
+                self.alpha = i
+                break
 
     def get_centroid(self):
         aindex = list(range(self.atomcount))

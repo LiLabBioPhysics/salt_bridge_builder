@@ -30,6 +30,14 @@ def minimum_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     pairwise_arr = pairwise_dist(res1, res2)
     return np.min(pairwise_arr)
 
+def alpha_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
+    res1.get_alpha()
+    res2.get_alpha()
+    
+    dist = atom_dist(res1[res1.alpha], res2[res2.alpha])
+
+    return dist
+
 def sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     res1.get_side()
     res2.get_side()
@@ -81,9 +89,9 @@ def within_dist(complex:COMPLEX, chainname1: str, chainname2: str, cutoff: float
     chain2 = complex[chainname2]
     heuristic = []
     distances = []
-    avail_funcs = [minimum_dist, sidechain_dist, centroid_dist, sidechain_centroid_dist]
+    avail_funcs = [minimum_dist, sidechain_dist, centroid_dist, sidechain_centroid_dist, alpha_dist]
     if func not in avail_funcs:
-        raise Exception("Use one of minimum_dist, sidechain_dist, centroid_dist, or sidechain_centroid_dist functions")
+        raise Exception("Use one of minimum_dist, alpha_dist, sidechain_dist, centroid_dist, or sidechain_centroid_dist functions")
 
     for res1i in chain1.residues.keys():
         cur_res1 = chain1[res1i]
