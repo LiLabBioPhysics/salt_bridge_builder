@@ -18,7 +18,7 @@ The basic compoenents of my code so far are:
 
 #First you create a trajectory object, traj.
 #Note, you can read entire trajectories (like with traj2) but this takes a lot of time so I commented it out
-traj = TRAJECTORY("150mM_2000_3000.pdb")
+traj = TRAJECTORY("bimc_traj.pdb")
 
 #You can also create a complex if you don't want to deal with a trajectory
 cmplx = COMPLEX("6ta4.pdb")
