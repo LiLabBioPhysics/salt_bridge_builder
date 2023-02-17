@@ -19,12 +19,9 @@ def filter_charged_neutral(results: list, dont_consider=None) -> list:
         df_drop = pd.read_csv(dont_consider)
         for i in range(len(df_drop)):
             row = df_drop.iloc[i]
-            c1f = str(row["chain1"])
-            r1nf  = str(row["resname1"])
-            r1if  = int(row["resnum1"])
-            c2f  = str(row["chain2"])
-            r2nf  = str(row["resname2"])
-            r2if  = int(row["resnum2"])
+            c = str(row["chain"])
+            rn  = str(row["resname"])
+            ri  = int(row["resnum"])
 
             for j in range(len(df)):
                 row2 = df.iloc[j]
@@ -35,10 +32,10 @@ def filter_charged_neutral(results: list, dont_consider=None) -> list:
                 r2n = str(row2["resname2"])
                 r2i = int(row2["resnum2"])
 
-                if (c1 == c1f and r1n == r1nf and r1i == r1if and c2 == c2f and r2n == r2nf and r2i == r2if):
+                if (c1 == c and r1n == rn and r1i == ri):
                     keep_dont_consider[j] = False
 
-                elif (c1 == c2f and r1n == r2nf and r1i == r2if and c2 == c1f and r2n == r1nf and r2i == r1if):
+                elif ( 2 == c and r2n == rn and r2i == ri):
                     keep_dont_consider[j]= False
         
         return df[keep_dont_consider].reset_index(drop=True)

@@ -1,3 +1,5 @@
-﻿chain1,resname1,resnum1,chain2,resname2,resnum2
-K,ASN,266,A,GLU,97
-A,GLU,414,K,SER,256
+﻿chain,resname,resnum
+K,ASN,266
+A,GLU,97
+A,GLU,414
+K,SER,256
