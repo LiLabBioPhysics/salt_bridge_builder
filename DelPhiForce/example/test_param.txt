@@ -1,0 +1,14 @@
+perfil=70.0
+scale=2.0
+in(modpdb4,file=test_complex.pqr,format=pqr)
+indi=2.0
+exdi=80.0
+prbrad=1.4
+salt=0.0
+bndcon=2
+maxc=0.01
+linit=800
+in(frc,file=test_frc)
+out(frc,file=frc.out)
+site(a,p,f)
+energy(s,c)

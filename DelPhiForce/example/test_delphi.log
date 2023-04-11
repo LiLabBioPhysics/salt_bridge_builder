@@ -1,0 +1,495 @@
+
+Program started on 2017-5-17 at 13:36:12
+                                                                    
+   ____________________DelPhi C++ V. Beta 1_______________________  
+  |                                                               | 
+  | DelPhi, originally developed in Barry Honig's lab, solves     | 
+  | the Poisson-Boltzmann equation in 3D grid by using            | 
+  | Finite-Difference method. It allows for assigning various     | 
+  | dielectric regions and applying different boundary conditions.| 
+  | The calculated energy components are less grid dependent      | 
+  | due to induced surface charges method implemented in DelPhi.  | 
+  |                                                               | 
+  | The new version DelPhi C++ beta, is object oriented package   | 
+  | complemented with OpenMP and improved speed and memory usage. | 
+  |                                                               | 
+  |               For questions and help, visit                   | 
+  |              http://compbio.clemson.edu/forum/                | 
+  |               or email to delphi@g.clemson.edu                | 
+  |                                                               | 
+  |            August 2014, by DelPhi Development Team            | 
+  |____________________                   ________________________| 
+                       DelPhi C++ V. Beta 1                         
+                                                                    
+
+Program started on 2017-5-17 at 13:36:12
+
+assigning charges and radii... 
+
+
+opening formatted file: temp_test_complex
+No DELPHI keyword, assuming Delphi Format number = 0
+number of atoms read in = 16002 formatted 
+You are not reading from an object file! 
+Assuming having only molecules, and one medium 
+Object number 0 is a molecule
+   
+Direct mapping of epsilon: (0/1)(n/y)   1
+time to read in and/or assign rad/chrg = 0.090   sec 
+grid size                  :       321
+percent of box to be filled:    70.000
+scale,in grids/A :     2.000
+xmin,xmax     (A):   -25.896     86.106
+ymin,ymax     (A):   -25.766     65.468
+zmin,zmax     (A):   -26.282     81.440
+x,y,z range   (A):   112.002     91.234    107.722
+system geometric center in (A):    30.105     19.851     27.579
+grid box is centered in (A)   :    30.105     19.851     27.579
+object centre offset (gu)     :     0.000      0.000      0.000
+outer dielectric              :    80.000
+dielectric in medium number 1 :     2.000
+first kind salt concentration (M)   :     0.000
+valences salt 1 are        1    and    1
+second kind salt concentration (M)   :     0.000
+valences salt 2 are        0    and    0
+ionic strength (M)         :     0.000
+debye length (A)           :1000000.000
+absolute temperature (K)   :   297.334
+ion exclusion radius (A)   :     2.000
+probe radius facing water(A:     1.400
+probe radius, internal (A) :     1.400
+boundary conditions        :     dipolar
+x,y,z periodic bc. and volt. drop flags : false false false false false false
+# of linear iterations     :       800
+convergence by rms  change :     0.000 kt
+convergence by max  change :     0.010 kt
+# of non-linear iterations :     0
+non-linear energy calculat.: false
+manual relaxation parameter: false
+ionic direct energy contribution: false
+concentration map output   : false
+spherical charge distbn.   : false
+INSIGHT format output      : false
+ionic direct energy contribution:  true
+modified atom file output     :  false
+map file label                : qdiffxas: qdiffxs4 with an improved surfacing routine
+ convergence graph turned off
+ potential listings turned off
+
+Starting creating Van der Waals Epsilon Map: 
+Ending creating Van der Waals Epsilon Map 
+boundary points facing continuum solvent= 316074
+total number of boundary points before elab.= 316074
+# of vertices = 384 # of edges = 372
+# of pairs = 561388
+# pairs analyzed (atom-atom and atom-object)= 561388
+# exposed pairs (atom-atom and atom-object)= 20862
+no. arc points = 438114
+no. surface atoms = 6700 nbur = 9302
+initial cube size too small << 
+in assigning accessible points to a grid
+therefore rescaling...
+ grid for indexing accessible points =  2.408
+bgp added m=102395 bgp removed mr =209408
+bgp added m=18859 bgp removed mr =63326
+bgp added m=1814 bgp removed mr =9735
+bgp added m=63 bgp removed mr =659
+bgp added m=2 bgp removed mr =1
+bgp added m=0 bgp removed mr =0
+no. cavity mid-points inaccessible to solvent = 0
+after surface elaboration iBoundNum= 156078
+ and iBoundNumsurf= 156078
+scaling boundary grid points ...
+iBoundNum: 156078
+0 points had to be assigned by global comparison
+99   HG  SER A   6 is charged! Radius moved from zero to 1.000
+365   HH  TYR A  24 is charged! Radius moved from zero to 1.000
+562   HG  SER A  38 is charged! Radius moved from zero to 1.000
+610   HG1 THR A  41 is charged! Radius moved from zero to 1.000
+685   HG  SER A  48 is charged! Radius moved from zero to 1.000
+733   HG1 THR A  51 is charged! Radius moved from zero to 1.000
+784   HG  SER A  54 is charged! Radius moved from zero to 1.000
+813   HG1 THR A  56 is charged! Radius moved from zero to 1.000
+1066   HG1 THR A  73 is charged! Radius moved from zero to 1.000
+1182   HG1 THR A  80 is charged! Radius moved from zero to 1.000
+1203   HG1 THR A  82 is charged! Radius moved from zero to 1.000
+1224   HH  TYR A  83 is charged! Radius moved from zero to 1.000
+1419   HG1 THR A  94 is charged! Radius moved from zero to 1.000
+1544   HH  TYR A 103 is charged! Radius moved from zero to 1.000
+1623   HH  TYR A 108 is charged! Radius moved from zero to 1.000
+1637   HG1 THR A 109 is charged! Radius moved from zero to 1.000
+1988   HG1 THR A 130 is charged! Radius moved from zero to 1.000
+2069   HG  SER A 136 is charged! Radius moved from zero to 1.000
+2133   HG  SER A 140 is charged! Radius moved from zero to 1.000
+2188   HG1 THR A 145 is charged! Radius moved from zero to 1.000
+2206   HG  SER A 147 is charged! Radius moved from zero to 1.000
+2247   HG1 THR A 150 is charged! Radius moved from zero to 1.000
+2258   HG  SER A 151 is charged! Radius moved from zero to 1.000
+2382   HG  SER A 158 is charged! Radius moved from zero to 1.000
+2431   HH  TYR A 161 is charged! Radius moved from zero to 1.000
+2493   HG  SER A 165 is charged! Radius moved from zero to 1.000
+2580   HG  SER A 170 is charged! Radius moved from zero to 1.000
+2620   HH  TYR A 172 is charged! Radius moved from zero to 1.000
+2702   HG  SER A 178 is charged! Radius moved from zero to 1.000
+2716   HG1 THR A 179 is charged! Radius moved from zero to 1.000
+2808   HH  TYR A 185 is charged! Radius moved from zero to 1.000
+2833   HG  SER A 187 is charged! Radius moved from zero to 1.000
+2885   HG1 THR A 190 is charged! Radius moved from zero to 1.000
+2899   HG1 THR A 191 is charged! Radius moved from zero to 1.000
+2930   HG1 THR A 193 is charged! Radius moved from zero to 1.000
+2944   HG1 THR A 194 is charged! Radius moved from zero to 1.000
+3006   HG  SER A 198 is charged! Radius moved from zero to 1.000
+3183   HH  TYR A 210 is charged! Radius moved from zero to 1.000
+3404   HG1 THR A 223 is charged! Radius moved from zero to 1.000
+3425   HH  TYR A 224 is charged! Radius moved from zero to 1.000
+3439   HG1 THR A 225 is charged! Radius moved from zero to 1.000
+3618   HG  SER A 236 is charged! Radius moved from zero to 1.000
+3629   HG  SER A 237 is charged! Radius moved from zero to 1.000
+3662   HG1 THR A 239 is charged! Radius moved from zero to 1.000
+3683   HG  SER A 241 is charged! Radius moved from zero to 1.000
+3869   HG1 THR A 253 is charged! Radius moved from zero to 1.000
+3935   HG1 THR A 257 is charged! Radius moved from zero to 1.000
+4019   HH  TYR A 262 is charged! Radius moved from zero to 1.000
+4158   HG1 THR A 271 is charged! Radius moved from zero to 1.000
+4179   HH  TYR A 272 is charged! Radius moved from zero to 1.000
+4249   HG  SER A 277 is charged! Radius moved from zero to 1.000
+4327   HH  TYR A 282 is charged! Radius moved from zero to 1.000
+4406   HG  SER A 287 is charged! Radius moved from zero to 1.000
+4480   HG1 THR A 292 is charged! Radius moved from zero to 1.000
+4788   HH  TYR A 312 is charged! Radius moved from zero to 1.000
+4896   HH  TYR A 319 is charged! Radius moved from zero to 1.000
+5112   HG1 THR A 334 is charged! Radius moved from zero to 1.000
+5167   HG1 THR A 337 is charged! Radius moved from zero to 1.000
+5227   HG1 THR A 340 is charged! Radius moved from zero to 1.000
+5374   HG1 THR A 349 is charged! Radius moved from zero to 1.000
+5500   HH  TYR A 357 is charged! Radius moved from zero to 1.000
+5557   HG1 THR A 361 is charged! Radius moved from zero to 1.000
+5821   HG  SER A 379 is charged! Radius moved from zero to 1.000
+5849   HG1 THR A 381 is charged! Radius moved from zero to 1.000
+5863   HG1 THR A 382 is charged! Radius moved from zero to 1.000
+6144   HH  TYR A 399 is charged! Radius moved from zero to 1.000
+6308   HH  TYR A 408 is charged! Radius moved from zero to 1.000
+6453   HG  SER A 419 is charged! Radius moved from zero to 1.000
+6655   HH  TYR A 432 is charged! Radius moved from zero to 1.000
+6748   HG  SER A 439 is charged! Radius moved from zero to 1.000
+7140   HG  SER B  25 is charged! Radius moved from zero to 1.000
+7250   HG1 THR B  33 is charged! Radius moved from zero to 1.000
+7268   HG  SER B  35 is charged! Radius moved from zero to 1.000
+7289   HH  TYR B  36 is charged! Radius moved from zero to 1.000
+7336   HG  SER B  40 is charged! Radius moved from zero to 1.000
+7512   HH  TYR B  52 is charged! Radius moved from zero to 1.000
+7533   HH  TYR B  53 is charged! Radius moved from zero to 1.000
+7646   HH  TYR B  61 is charged! Radius moved from zero to 1.000
+7845   HG1 THR B  74 is charged! Radius moved from zero to 1.000
+7885   HG  SER B  77 is charged! Radius moved from zero to 1.000
+7936   HG  SER B  80 is charged! Radius moved from zero to 1.000
+8195   HG  SER B  97 is charged! Radius moved from zero to 1.000
+8348   HH  TYR B 108 is charged! Radius moved from zero to 1.000
+8362   HG1 THR B 109 is charged! Radius moved from zero to 1.000
+8467   HG  SER B 117 is charged! Radius moved from zero to 1.000
+8618   HG  SER B 126 is charged! Radius moved from zero to 1.000
+8644   HG  SER B 128 is charged! Radius moved from zero to 1.000
+8791   HG1 THR B 138 is charged! Radius moved from zero to 1.000
+8819   HG  SER B 140 is charged! Radius moved from zero to 1.000
+8873   HG1 THR B 145 is charged! Radius moved from zero to 1.000
+8891   HG  SER B 147 is charged! Radius moved from zero to 1.000
+8936   HG1 THR B 151 is charged! Radius moved from zero to 1.000
+9004   HG  SER B 155 is charged! Radius moved from zero to 1.000
+9120   HH  TYR B 161 is charged! Radius moved from zero to 1.000
+9234   HG1 THR B 168 is charged! Radius moved from zero to 1.000
+9265   HG  SER B 170 is charged! Radius moved from zero to 1.000
+9322   HG  SER B 174 is charged! Radius moved from zero to 1.000
+9385   HG  SER B 178 is charged! Radius moved from zero to 1.000
+9411   HG1 THR B 180 is charged! Radius moved from zero to 1.000
+9493   HH  TYR B 185 is charged! Radius moved from zero to 1.000
+9531   HG1 THR B 188 is charged! Radius moved from zero to 1.000
+9561   HG  SER B 190 is charged! Radius moved from zero to 1.000
+9689   HG1 THR B 198 is charged! Radius moved from zero to 1.000
+9730   HG1 THR B 201 is charged! Radius moved from zero to 1.000
+9751   HH  TYR B 202 is charged! Radius moved from zero to 1.000
+9872   HH  TYR B 210 is charged! Radius moved from zero to 1.000
+9972   HG1 THR B 216 is charged! Radius moved from zero to 1.000
+10046   HG1 THR B 220 is charged! Radius moved from zero to 1.000
+10060   HG1 THR B 221 is charged! Radius moved from zero to 1.000
+10088   HG1 THR B 223 is charged! Radius moved from zero to 1.000
+10109   HH  TYR B 224 is charged! Radius moved from zero to 1.000
+10224   HG  SER B 232 is charged! Radius moved from zero to 1.000
+10248   HG1 THR B 234 is charged! Radius moved from zero to 1.000
+10276   HG  SER B 236 is charged! Radius moved from zero to 1.000
+10313   HG1 THR B 239 is charged! Radius moved from zero to 1.000
+10327   HG1 THR B 240 is charged! Radius moved from zero to 1.000
+10914   HG1 THR B 276 is charged! Radius moved from zero to 1.000
+10925   HG  SER B 277 is charged! Radius moved from zero to 1.000
+10967   HG  SER B 280 is charged! Radius moved from zero to 1.000
+11022   HH  TYR B 283 is charged! Radius moved from zero to 1.000
+11089   HG1 THR B 287 is charged! Radius moved from zero to 1.000
+11167   HG1 THR B 292 is charged! Radius moved from zero to 1.000
+11480   HH  TYR B 312 is charged! Radius moved from zero to 1.000
+11513   HG1 THR B 314 is charged! Radius moved from zero to 1.000
+11668   HG  SER B 324 is charged! Radius moved from zero to 1.000
+11926   HG  SER B 340 is charged! Radius moved from zero to 1.000
+11937   HG  SER B 341 is charged! Radius moved from zero to 1.000
+11958   HH  TYR B 342 is charged! Radius moved from zero to 1.000
+12146   HG1 THR B 353 is charged! Radius moved from zero to 1.000
+12342   HG  SER B 374 is charged! Radius moved from zero to 1.000
+12366   HG1 THR B 376 is charged! Radius moved from zero to 1.000
+12437   HG  SER B 381 is charged! Radius moved from zero to 1.000
+12451   HG1 THR B 382 is charged! Radius moved from zero to 1.000
+12627   HG  SER B 392 is charged! Radius moved from zero to 1.000
+12693   HG1 THR B 396 is charged! Radius moved from zero to 1.000
+12921   HH  TYR B 408 is charged! Radius moved from zero to 1.000
+12935   HG1 THR B 409 is charged! Radius moved from zero to 1.000
+13074   HG1 THR B 419 is charged! Radius moved from zero to 1.000
+13125   HG  SER B 423 is charged! Radius moved from zero to 1.000
+13228   HG  SER B 430 is charged! Radius moved from zero to 1.000
+13264   HH  TYR B 432 is charged! Radius moved from zero to 1.000
+13319   HH  TYR B 435 is charged! Radius moved from zero to 1.000
+BE CAREFUL!! A WRONG ASSIGNMENT FOR THE RADIUS MIGHT LEAD TO INACCURATE REACTION FIELD ENERGY !!!
+ number of atom coordinates read  :     16002
+ total number of assigned charges :     13349
+ net assigned charge              :   -33.000
+ assigned positive charge         :  1640.798
+ centred at (gu)                  :   122.114    192.224    160.190
+ assigned negative charge         : -1673.798
+ centred at (gu)                  :   122.354    191.901    160.253
+
+number of dielectric boundary points    156078
+no. dielectric boundary points in salt = 95826
+no. charged boundary grid points = 38
+iepsmp to db, and charging done at 36.920   sec 
+number of grid points assigned charge 103665
+
+ gauss-seidel spectral radius is  1.000
+estimated iterations to convergence 716
+
+ setting boundary conditions
+
+ some initial phi values: 
+ midg,midg,1; midg,midg,igrid : -2.826e+00   -2.899e+00
+ midg,1,midg; midg,igrid,midg : -2.601e+00   -3.136e+00
+ 1,midg,midg; igrid,midg,midg : -3.479e+00   -2.469e+00
+ 1,1,1; igrid,igrid,igrid : -1.700e+00   -1.635e+00
+
+setup time was 1.450   sec 
+
+now iterating on 2017-5-17 at 13:36:51
+
+  rms-change     max change       #iterations
+6.571e+00  3.529e+02  at  10    iterations
+5.178e+00  2.227e+02  at  20    iterations
+4.085e+00  1.595e+02  at  30    iterations
+3.209e+00  1.283e+02  at  40    iterations
+2.540e+00  9.703e+01  at  50    iterations
+2.003e+00  7.800e+01  at  60    iterations
+1.585e+00  6.832e+01  at  70    iterations
+1.250e+00  4.817e+01  at  80    iterations
+9.901e-01  3.864e+01  at  90    iterations
+7.826e-01  3.354e+01  at  100   iterations
+6.190e-01  2.636e+01  at  110   iterations
+4.902e-01  1.920e+01  at  120   iterations
+3.881e-01  1.590e+01  at  130   iterations
+3.072e-01  1.236e+01  at  140   iterations
+2.431e-01  9.926e+00  at  150   iterations
+1.925e-01  7.501e+00  at  160   iterations
+1.525e-01  5.940e+00  at  170   iterations
+1.209e-01  4.993e+00  at  180   iterations
+9.586e-02  3.854e+00  at  190   iterations
+7.604e-02  2.872e+00  at  200   iterations
+6.022e-02  2.386e+00  at  210   iterations
+4.771e-02  1.975e+00  at  220   iterations
+3.790e-02  1.419e+00  at  230   iterations
+3.001e-02  1.158e+00  at  240   iterations
+2.386e-02  9.507e-01  at  250   iterations
+1.894e-02  7.664e-01  at  260   iterations
+1.504e-02  5.993e-01  at  270   iterations
+1.196e-02  4.668e-01  at  280   iterations
+9.471e-03  3.872e-01  at  290   iterations
+7.528e-03  3.098e-01  at  300   iterations
+5.977e-03  2.351e-01  at  310   iterations
+4.756e-03  1.873e-01  at  320   iterations
+3.787e-03  1.379e-01  at  330   iterations
+3.012e-03  1.179e-01  at  340   iterations
+2.397e-03  9.394e-02  at  350   iterations
+1.909e-03  7.382e-02  at  360   iterations
+1.524e-03  6.454e-02  at  370   iterations
+1.216e-03  5.380e-02  at  380   iterations
+9.724e-04  3.803e-02  at  390   iterations
+7.776e-04  3.217e-02  at  400   iterations
+6.235e-04  2.526e-02  at  410   iterations
+4.998e-04  1.898e-02  at  420   iterations
+4.017e-04  1.563e-02  at  430   iterations
+3.236e-04  1.325e-02  at  440   iterations
+2.611e-04  1.022e-02  at  450   iterations
+2.115e-04  7.771e-03  at  460   iterations
+
+finished qdiffx linear iterations 2017-5-17 at 13:39:42
+
+total time elapsed so far: 0:2:51
+
+ charged atom number   99  radius changed from zero to 1.000
+ charged atom number  365  radius changed from zero to 1.000
+ charged atom number  562  radius changed from zero to 1.000
+ charged atom number  610  radius changed from zero to 1.000
+ charged atom number  685  radius changed from zero to 1.000
+ charged atom number  733  radius changed from zero to 1.000
+ charged atom number  784  radius changed from zero to 1.000
+ charged atom number  813  radius changed from zero to 1.000
+ charged atom number 1066  radius changed from zero to 1.000
+ charged atom number 1182  radius changed from zero to 1.000
+ charged atom number 1203  radius changed from zero to 1.000
+ charged atom number 1224  radius changed from zero to 1.000
+ charged atom number 1419  radius changed from zero to 1.000
+ charged atom number 1544  radius changed from zero to 1.000
+ charged atom number 1623  radius changed from zero to 1.000
+ charged atom number 1637  radius changed from zero to 1.000
+ charged atom number 1988  radius changed from zero to 1.000
+ charged atom number 2069  radius changed from zero to 1.000
+ charged atom number 2133  radius changed from zero to 1.000
+ charged atom number 2188  radius changed from zero to 1.000
+ charged atom number 2206  radius changed from zero to 1.000
+ charged atom number 2247  radius changed from zero to 1.000
+ charged atom number 2258  radius changed from zero to 1.000
+ charged atom number 2382  radius changed from zero to 1.000
+ charged atom number 2431  radius changed from zero to 1.000
+ charged atom number 2493  radius changed from zero to 1.000
+ charged atom number 2580  radius changed from zero to 1.000
+ charged atom number 2620  radius changed from zero to 1.000
+ charged atom number 2702  radius changed from zero to 1.000
+ charged atom number 2716  radius changed from zero to 1.000
+ charged atom number 2808  radius changed from zero to 1.000
+ charged atom number 2833  radius changed from zero to 1.000
+ charged atom number 2885  radius changed from zero to 1.000
+ charged atom number 2899  radius changed from zero to 1.000
+ charged atom number 2930  radius changed from zero to 1.000
+ charged atom number 2944  radius changed from zero to 1.000
+ charged atom number 3006  radius changed from zero to 1.000
+ charged atom number 3183  radius changed from zero to 1.000
+ charged atom number 3404  radius changed from zero to 1.000
+ charged atom number 3425  radius changed from zero to 1.000
+ charged atom number 3439  radius changed from zero to 1.000
+ charged atom number 3618  radius changed from zero to 1.000
+ charged atom number 3629  radius changed from zero to 1.000
+ charged atom number 3662  radius changed from zero to 1.000
+ charged atom number 3683  radius changed from zero to 1.000
+ charged atom number 3869  radius changed from zero to 1.000
+ charged atom number 3935  radius changed from zero to 1.000
+ charged atom number 4019  radius changed from zero to 1.000
+ charged atom number 4158  radius changed from zero to 1.000
+ charged atom number 4179  radius changed from zero to 1.000
+ charged atom number 4249  radius changed from zero to 1.000
+ charged atom number 4327  radius changed from zero to 1.000
+ charged atom number 4406  radius changed from zero to 1.000
+ charged atom number 4480  radius changed from zero to 1.000
+ charged atom number 4788  radius changed from zero to 1.000
+ charged atom number 4896  radius changed from zero to 1.000
+ charged atom number 5112  radius changed from zero to 1.000
+ charged atom number 5167  radius changed from zero to 1.000
+ charged atom number 5227  radius changed from zero to 1.000
+ charged atom number 5374  radius changed from zero to 1.000
+ charged atom number 5500  radius changed from zero to 1.000
+ charged atom number 5557  radius changed from zero to 1.000
+ charged atom number 5821  radius changed from zero to 1.000
+ charged atom number 5849  radius changed from zero to 1.000
+ charged atom number 5863  radius changed from zero to 1.000
+ charged atom number 6144  radius changed from zero to 1.000
+ charged atom number 6308  radius changed from zero to 1.000
+ charged atom number 6453  radius changed from zero to 1.000
+ charged atom number 6655  radius changed from zero to 1.000
+ charged atom number 6748  radius changed from zero to 1.000
+ charged atom number 7140  radius changed from zero to 1.000
+ charged atom number 7250  radius changed from zero to 1.000
+ charged atom number 7268  radius changed from zero to 1.000
+ charged atom number 7289  radius changed from zero to 1.000
+ charged atom number 7336  radius changed from zero to 1.000
+ charged atom number 7512  radius changed from zero to 1.000
+ charged atom number 7533  radius changed from zero to 1.000
+ charged atom number 7646  radius changed from zero to 1.000
+ charged atom number 7845  radius changed from zero to 1.000
+ charged atom number 7885  radius changed from zero to 1.000
+ charged atom number 7936  radius changed from zero to 1.000
+ charged atom number 8195  radius changed from zero to 1.000
+ charged atom number 8348  radius changed from zero to 1.000
+ charged atom number 8362  radius changed from zero to 1.000
+ charged atom number 8467  radius changed from zero to 1.000
+ charged atom number 8618  radius changed from zero to 1.000
+ charged atom number 8644  radius changed from zero to 1.000
+ charged atom number 8791  radius changed from zero to 1.000
+ charged atom number 8819  radius changed from zero to 1.000
+ charged atom number 8873  radius changed from zero to 1.000
+ charged atom number 8891  radius changed from zero to 1.000
+ charged atom number 8936  radius changed from zero to 1.000
+ charged atom number 9004  radius changed from zero to 1.000
+ charged atom number 9120  radius changed from zero to 1.000
+ charged atom number 9234  radius changed from zero to 1.000
+ charged atom number 9265  radius changed from zero to 1.000
+ charged atom number 9322  radius changed from zero to 1.000
+ charged atom number 9385  radius changed from zero to 1.000
+ charged atom number 9411  radius changed from zero to 1.000
+ charged atom number 9493  radius changed from zero to 1.000
+ charged atom number 9531  radius changed from zero to 1.000
+ charged atom number 9561  radius changed from zero to 1.000
+ charged atom number 9689  radius changed from zero to 1.000
+ charged atom number 9730  radius changed from zero to 1.000
+ charged atom number 9751  radius changed from zero to 1.000
+ charged atom number 9872  radius changed from zero to 1.000
+ charged atom number 9972  radius changed from zero to 1.000
+ charged atom number 10046  radius changed from zero to 1.000
+ charged atom number 10060  radius changed from zero to 1.000
+ charged atom number 10088  radius changed from zero to 1.000
+ charged atom number 10109  radius changed from zero to 1.000
+ charged atom number 10224  radius changed from zero to 1.000
+ charged atom number 10248  radius changed from zero to 1.000
+ charged atom number 10276  radius changed from zero to 1.000
+ charged atom number 10313  radius changed from zero to 1.000
+ charged atom number 10327  radius changed from zero to 1.000
+ charged atom number 10914  radius changed from zero to 1.000
+ charged atom number 10925  radius changed from zero to 1.000
+ charged atom number 10967  radius changed from zero to 1.000
+ charged atom number 11022  radius changed from zero to 1.000
+ charged atom number 11089  radius changed from zero to 1.000
+ charged atom number 11167  radius changed from zero to 1.000
+ charged atom number 11480  radius changed from zero to 1.000
+ charged atom number 11513  radius changed from zero to 1.000
+ charged atom number 11668  radius changed from zero to 1.000
+ charged atom number 11926  radius changed from zero to 1.000
+ charged atom number 11937  radius changed from zero to 1.000
+ charged atom number 11958  radius changed from zero to 1.000
+ charged atom number 12146  radius changed from zero to 1.000
+ charged atom number 12342  radius changed from zero to 1.000
+ charged atom number 12366  radius changed from zero to 1.000
+ charged atom number 12437  radius changed from zero to 1.000
+ charged atom number 12451  radius changed from zero to 1.000
+ charged atom number 12627  radius changed from zero to 1.000
+ charged atom number 12693  radius changed from zero to 1.000
+ charged atom number 12921  radius changed from zero to 1.000
+ charged atom number 12935  radius changed from zero to 1.000
+ charged atom number 13074  radius changed from zero to 1.000
+ charged atom number 13125  radius changed from zero to 1.000
+ charged atom number 13228  radius changed from zero to 1.000
+ charged atom number 13264  radius changed from zero to 1.000
+ charged atom number 13319  radius changed from zero to 1.000
+ self-reaction field energy       :               -148470.080 kt
+ total s.charge,no epsin carrying :                 16.087
+ corrected reaction field energy  :               -12021.760 kt
+ total reaction field energy      :               -160491.839 kt
+ coulombic energy                 :               -215995.986 kt
+ all required energy terms but grid and self_react.:  -228017.745 kt
+
+
+writing potentials at given sites...
+coordinates, etc for potential output read from file temp_test_frc
+potentials written to file frc.out
+
+
+ number of atom coordinates read : 2653
+
+frc stuff now done at 2017-5-17 at 13:40:24
+
+
+   total CPU time is  0:4:11
+
+Delphi exited on 2017-5-17 at 13:40:24
+
+
+ .........  PROGRAM EXITS SUCCESSFULLY : WITH TOTAL 5 WARNING(S) ........
+
