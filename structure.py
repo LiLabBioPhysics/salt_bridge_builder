@@ -1,3 +1,6 @@
+import subprocess
+import os
+
 class ATOM:
     def __init__(self, x:float, y:float, z:float, type: str = None):
         self.x = x
@@ -122,12 +125,14 @@ class COMPLEX:
 
         if pdbfile is not None:
             data_clean = []
+            self.pdb_clean = ""
             with open(pdbfile, "r") as f:
                 data = f.readlines()
             for line in data:
                 cur_line = line.split()
                 if cur_line[0] == "ATOM":
                     data_clean.append(cur_line[1:9])
+                    self.pdb_clean = self.pdb_clean+line
             frame_data = data_clean
    
         for line in frame_data:
@@ -157,6 +162,49 @@ class COMPLEX:
 
             self.chains[chainname].residues[resnum].add_atom(cur_atom, atomnum)
 
+    def split_chain(self, chain: str, write=False):
+        CHAIN_COLUMN = 21
+        self.remove_chain = ""
+        self.keep_chains = "" 
+
+        for line in self.pdb_clean.splitlines():
+            if line[CHAIN_COLUMN] == chain:
+                self.remove_chain = self.remove_chain+line+"\n"
+            else:
+                self.keep_chains=self.keep_chains+line+"\n"
+        
+        if self.remove_chain == "":
+            raise ValueError("Your chain should exist in the pdb file.")
+        
+        if write:
+            with open("seperated_chain.pdb", "w") as f:
+                f.write(self.remove_chain)
+
+            with open("unseperated_chains.pdb", "w") as f:
+                f.write(self.keep_chains)
+
+    def make_pqr(pdbfile : str, ph="7.4", ff="CHARMM"):
+        tail = os.path.split(pdbfile)[1]
+        pqrfile = tail.split(".")[0]+".pqr"
+        subprocess.run(["pdb2pqr", "--ff", ff, "--pH", ph, "--keep-chain", pdbfile, pqrfile])
+
+    def make_pqr_files(self, chain:str, write=True):
+        self.split_chain(chain, write=True)
+        COMPLEX.make_pqr("seperated_chain_mut.pdb")
+        COMPLEX.make_pqr("unseperated_chains.pdb")
+
+        if not write:
+            os.remove("seperated_chain.pdb")
+            os.remove("seperated_chain.pqr")
+            os.remove("unseperated_chain.pdb")
+            os.remove("unseperated_chain.pqr")
+
+    def run_DelPhiForce(self, chain, output):
+        self.make_pqr_files(chain)
+        subprocess.run(["bash", "DelPhiForce/bin/DelPhiForce.sh", "-1", "unseperated_chains.pqr", "-2", "seperated_chain.pqr", "-e", "./DelPhiForce/bin/delphicpp", "-o", output])
+
+
+            
 class TRAJECTORY:
     def read_start_points(self, multipdbfile: str):
         count = 1
