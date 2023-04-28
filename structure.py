@@ -78,7 +78,6 @@ class RESIDUE:
         self.sidecentroidy = y_tot/n
         self.sidecentroidz = z_tot/n
 
-
 class CHAIN:
 
     positive = {"HIS", "LYS", "ARG"}
@@ -108,7 +107,6 @@ class CHAIN:
     
     def __getitem__(self, key):
         return self.residues[key]
-
 
 class COMPLEX:
 
@@ -183,16 +181,6 @@ class COMPLEX:
             with open("unseperated_chains.pdb", "w") as f:
                 f.write(self.keep_chains)
 
-    def make_pqr(pdbfile : str, ph="7.4", ff="CHARMM"):
-        tail = os.path.split(pdbfile)[1]
-        pqrfile = tail.split(".")[0]+".pqr"
-        subprocess.run(["pdb2pqr", "--ff", ff, "--pH", ph, "--keep-chain", pdbfile, pqrfile])
-
-    def make_pqr_files(self, chain:str, write=True):
-        self.split_chain(chain, write=True)
-        COMPLEX.make_pqr("seperated_chain_mut.pdb")
-        COMPLEX.make_pqr("unseperated_chains.pdb")
-
         if not write:
             os.remove("seperated_chain.pdb")
             os.remove("seperated_chain.pqr")
@@ -203,10 +191,14 @@ class COMPLEX:
         self.make_pqr_files(chain)
         subprocess.run(["bash", "DelPhiForce/bin/DelPhiForce.sh", "-1", "unseperated_chains.pqr", "-2", "seperated_chain.pqr", "-e", "./DelPhiForce/bin/delphicpp", "-o", output])
 
-
-            
+"""
+A trajectory is defined by a multi-pdb file where each frame represents a protein  
+complex at a specific timestep. Note: trajectories are zero-indexed.
+"""           
 class TRAJECTORY:
-    def read_start_points(self, multipdbfile: str):
+    #read_start_points() returns the first line number in a multipdb file for each frame.
+    #Doing so ensures that not the whole multipdb file is read into memory.
+    def read_start_points(self, multipdbfile: str) -> None:
         count = 1
         start_points = [1]
         with open(multipdbfile, "r") as f:
@@ -217,13 +209,14 @@ class TRAJECTORY:
                     start_points.append(count+2)
                 count += 1
 
-
         start_points.pop(-1)
         return start_points
 
-
-    def read_frame(self, start = 0):
+    def read_frame(self, start) -> None:
+        #read_frame() parses the multipdb file at the intervals found by start_points() and returns parsed data
+        #in list form.
         data = []
+        
         if len(self.start_points) == 1:
             with open(self.filename, "r") as f:
                 data = f.readlines()
@@ -232,7 +225,7 @@ class TRAJECTORY:
         else:
             data = []
             dt = self.start_points[1] - self.start_points[0] 
-            specified_lines = range(start, dt)
+            specified_lines = range(start*dt, start*dt+1 +dt)
             with open(self.filename, "r") as f:
                 for pos, l_num in enumerate(f):
                     if pos in specified_lines:
@@ -240,16 +233,13 @@ class TRAJECTORY:
             data.pop(-1)
 
         atoms = [x.split()[1:9] for x in data if x[0:4]=="ATOM"]
-        
         return atoms
-
 
     def __init__(self, multipdbfile:str) -> None:
         self.filename = multipdbfile
         self.start_points = self.read_start_points(multipdbfile)
         self.frame = 0
         self.add_complex(self.read_frame(self.frame))
-
 
     def add_complex(self, data):
         self.complex = COMPLEX(frame_data = data)
@@ -260,7 +250,10 @@ class TRAJECTORY:
     def __getitem__(self, key):
         if key == self.frame:
             return self.complex
-
+        
+        elif (key >= len(self)):
+            raise IndexError
+        
         else:
             self.frame = key
             self.add_complex(self.read_frame(key))
