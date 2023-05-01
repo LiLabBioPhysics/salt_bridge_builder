@@ -108,6 +108,10 @@ class CHAIN:
     def __getitem__(self, key):
         return self.residues[key]
 
+"""
+A complex is defined by a single pdb file containing one or more protein chains.
+"""       
+
 class COMPLEX:
 
     def add_chain(self, chain: CHAIN, chainname: str):
@@ -116,32 +120,38 @@ class COMPLEX:
     def __getitem__(self, key):
         return self.chains[key]
 
+    #Creating a COMPLEX directly from a single pdb file or 
+    # from the data passed by the TRAJECTORY class 
     def __init__(self, pdbfile=None, frame_data=None):
 
         self.chains = dict()
         self.chainnames = self.chains.keys()
-
+        
         if pdbfile is not None:
-            data_clean = []
-            self.pdb_clean = ""
+            frame_data = []
+            # self.pdb_clean = ""
             with open(pdbfile, "r") as f:
                 data = f.readlines()
             for line in data:
-                cur_line = line.split()
-                if cur_line[0] == "ATOM":
-                    data_clean.append(cur_line[1:9])
-                    self.pdb_clean = self.pdb_clean+line
-            frame_data = data_clean
-   
+                if line[0:4] == "ATOM":
+                    frame_data.append(line)
+
+        else:
+            tmp_data = []
+            for line in frame_data:
+                 if line[0:4] == "ATOM":
+                    tmp_data.append(line)
+            frame_data = tmp_data
+
         for line in frame_data:
-            atomnum = int(line[0])
-            atomtype = line[1]
-            resname = line[2]
-            chainname = line[3]
-            resnum = int(line[4])
-            x = float(line[5])
-            y = float(line[6])
-            z = float(line[7])
+            atomnum = int(line[6:11].strip())
+            atomtype = line[12:16].strip()
+            resname = line[17:20]
+            chainname = line[21]
+            resnum = int(line[22:26].strip())
+            x = float(line[30:38].strip())
+            y = float(line[38:46].strip())
+            z = float(line[46:54].strip())
 
             cur_atom = ATOM(x, y, z, atomtype)
 
@@ -160,36 +170,36 @@ class COMPLEX:
 
             self.chains[chainname].residues[resnum].add_atom(cur_atom, atomnum)
 
-    def split_chain(self, chain: str, write=False):
-        CHAIN_COLUMN = 21
-        self.remove_chain = ""
-        self.keep_chains = "" 
+    # def split_chain(self, chain: str, write=False):
+    #     CHAIN_COLUMN = 21
+    #     self.remove_chain = ""
+    #     self.keep_chains = "" 
 
-        for line in self.pdb_clean.splitlines():
-            if line[CHAIN_COLUMN] == chain:
-                self.remove_chain = self.remove_chain+line+"\n"
-            else:
-                self.keep_chains=self.keep_chains+line+"\n"
+    #     for line in self.pdb_clean.splitlines():
+    #         if line[CHAIN_COLUMN] == chain:
+    #             self.remove_chain = self.remove_chain+line+"\n"
+    #         else:
+    #             self.keep_chains=self.keep_chains+line+"\n"
         
-        if self.remove_chain == "":
-            raise ValueError("Your chain should exist in the pdb file.")
+    #     if self.remove_chain == "":
+    #         raise ValueError("Your chain should exist in the pdb file.")
         
-        if write:
-            with open("seperated_chain.pdb", "w") as f:
-                f.write(self.remove_chain)
+    #     if write:
+    #         with open("seperated_chain.pdb", "w") as f:
+    #             f.write(self.remove_chain)
 
-            with open("unseperated_chains.pdb", "w") as f:
-                f.write(self.keep_chains)
+    #         with open("unseperated_chains.pdb", "w") as f:
+    #             f.write(self.keep_chains)
 
-        if not write:
-            os.remove("seperated_chain.pdb")
-            os.remove("seperated_chain.pqr")
-            os.remove("unseperated_chain.pdb")
-            os.remove("unseperated_chain.pqr")
+    #     if not write:
+    #         os.remove("seperated_chain.pdb")
+    #         os.remove("seperated_chain.pqr")
+    #         os.remove("unseperated_chain.pdb")
+    #         os.remove("unseperated_chain.pqr")
 
-    def run_DelPhiForce(self, chain, output):
-        self.make_pqr_files(chain)
-        subprocess.run(["bash", "DelPhiForce/bin/DelPhiForce.sh", "-1", "unseperated_chains.pqr", "-2", "seperated_chain.pqr", "-e", "./DelPhiForce/bin/delphicpp", "-o", output])
+    # def run_DelPhiForce(self, chain, output):
+    #     self.make_pqr_files(chain)
+    #     subprocess.run(["bash", "DelPhiForce/bin/DelPhiForce.sh", "-1", "unseperated_chains.pqr", "-2", "seperated_chain.pqr", "-e", "./DelPhiForce/bin/delphicpp", "-o", output])
 
 """
 A trajectory is defined by a multi-pdb file where each frame represents a protein  
@@ -232,8 +242,7 @@ class TRAJECTORY:
                         data.append(l_num)
             data.pop(-1)
 
-        atoms = [x.split()[1:9] for x in data if x[0:4]=="ATOM"]
-        return atoms
+        return data
 
     def __init__(self, multipdbfile:str) -> None:
         self.filename = multipdbfile

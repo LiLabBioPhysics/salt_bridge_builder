@@ -24,8 +24,9 @@ cmplx1 = traj[0]
 
 #Once you have a complex, you can specify what chains to apply a distance to.
 #For example, the following line uses the centroid distance (centroid_dist)
-# defined in distances to find all residues which are 7 angstroms apart 
-centroid1  = within_dist(cmplx, "A", "K", 7, centroid_dist)
+#defined in distances to find all residues which are 7 angstroms apart
+#from chain K. 
+centroid1  = within_dist(cmplx, "K", 7, centroid_dist)
 
 #From these results, you can filter those pairs which are likely to be good
 #candidates for mutations. Specifically, we care about those pairs for which one

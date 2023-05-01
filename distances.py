@@ -84,30 +84,33 @@ def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     return ((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)**(0.5)
 
 
-def within_dist(complex:COMPLEX, chainname1: str, chainname2: str, cutoff: float, func) -> list:
+def within_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> list:
     chain1 = complex[chainname1]
-    chain2 = complex[chainname2]
     heuristic = []
     distances = []
     avail_funcs = [minimum_dist, sidechain_dist, centroid_dist, sidechain_centroid_dist, alpha_dist]
     if func not in avail_funcs:
         raise Exception("Use one of minimum_dist, alpha_dist, sidechain_dist, centroid_dist, or sidechain_centroid_dist functions")
 
-    for res1i in chain1.residues.keys():
-        cur_res1 = chain1[res1i]
-        for res2i in chain2.residues.keys():
-            cur_res2 = chain2[res2i]
-            cur_dist = centroid_dist(cur_res1, cur_res2)
-            if cur_dist < cutoff + 10:
-                heuristic.append([cur_res1.name, cur_res1.index, cur_res2.name, cur_res2.index, cur_dist])
+    for chainame2 in complex.chainnames:
+        if chainame2 != chainname1:
+            chain2 = complex[chainame2]
+            for res1i in chain1.residues.keys():
+                cur_res1 = chain1[res1i]
+                for res2i in chain2.residues.keys():
+                    cur_res2 = chain2[res2i]
+                    cur_dist = centroid_dist(cur_res1, cur_res2)
+                    if cur_dist < cutoff + 10:
+                        heuristic.append([cur_res1.name, cur_res1.index, cur_res2.name, cur_res2.index, cur_dist, chainame2])
 
 
     for pairs in heuristic:
+        chain2 = complex[pairs[5]]
         cur_res1 = chain1[pairs[1]]
         cur_res2 = chain2[pairs[3]]
         cur_dist = func(cur_res1, cur_res2)
         if cur_dist < cutoff:
-            distances.append([chainname1,cur_res1.name, cur_res1.index, chainname2, cur_res2.name, cur_res2.index, cur_dist])
+            distances.append([chainname1,cur_res1.name, cur_res1.index, pairs[5], cur_res2.name, cur_res2.index, cur_dist])
                 
     return distances
 
