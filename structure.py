@@ -2,11 +2,22 @@ import subprocess
 import os
 
 class ATOM:
+    POSATOM = {"ND1", "NE2", "NE", "NH1", "NH2", "NZ"}
+    NEGATOM = {"OD1", "OD2", "OE1", "OE2"}
+    
     def __init__(self, x:float, y:float, z:float, type: str = None):
         self.x = x
         self.y = y
         self.z = z
         self.type = type
+        
+        if self.type in self.NEGATOM:
+            self.sb_able = "-"
+        elif self.type in self.POSATOM:
+            self.sb_able = "+"
+        else:
+            self.sb_able = "0"
+
 
 class RESIDUE:
     CTERATOMS = {"C"}
@@ -78,10 +89,12 @@ class RESIDUE:
         self.sidecentroidy = y_tot/n
         self.sidecentroidz = z_tot/n
 
+
 class CHAIN:
 
     positive = {"HIS", "LYS", "ARG"}
     negative = {"ASP", "GLU"}
+
     charged = positive | negative
     neutral = {"GLY", "ALA", "VAL", "LEU", "ILE", "PRO", "MET", "PHE",
     "TRP", "PRO", "TYR", "GLN", "ASN", "CYS", "THR", "SER"}
@@ -108,9 +121,10 @@ class CHAIN:
     def __getitem__(self, key):
         return self.residues[key]
 
+
 """
 A complex is defined by a single pdb file containing one or more protein chains.
-"""       
+"""  
 
 class COMPLEX:
 
@@ -169,37 +183,6 @@ class COMPLEX:
                 cur_chain.add_residue(cur_res, resname, resnum)
 
             self.chains[chainname].residues[resnum].add_atom(cur_atom, atomnum)
-
-    # def split_chain(self, chain: str, write=False):
-    #     CHAIN_COLUMN = 21
-    #     self.remove_chain = ""
-    #     self.keep_chains = "" 
-
-    #     for line in self.pdb_clean.splitlines():
-    #         if line[CHAIN_COLUMN] == chain:
-    #             self.remove_chain = self.remove_chain+line+"\n"
-    #         else:
-    #             self.keep_chains=self.keep_chains+line+"\n"
-        
-    #     if self.remove_chain == "":
-    #         raise ValueError("Your chain should exist in the pdb file.")
-        
-    #     if write:
-    #         with open("seperated_chain.pdb", "w") as f:
-    #             f.write(self.remove_chain)
-
-    #         with open("unseperated_chains.pdb", "w") as f:
-    #             f.write(self.keep_chains)
-
-    #     if not write:
-    #         os.remove("seperated_chain.pdb")
-    #         os.remove("seperated_chain.pqr")
-    #         os.remove("unseperated_chain.pdb")
-    #         os.remove("unseperated_chain.pqr")
-
-    # def run_DelPhiForce(self, chain, output):
-    #     self.make_pqr_files(chain)
-    #     subprocess.run(["bash", "DelPhiForce/bin/DelPhiForce.sh", "-1", "unseperated_chains.pqr", "-2", "seperated_chain.pqr", "-e", "./DelPhiForce/bin/delphicpp", "-o", output])
 
 """
 A trajectory is defined by a multi-pdb file where each frame represents a protein  

@@ -115,3 +115,35 @@ def within_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> list:
     return distances
 
 
+#
+def get_salt_bridges(complex: COMPLEX, cutoff:float = 3.2) -> list:
+    distances = []
+    
+    for chain1 in complex.chainnames:
+        cur_chain1 = complex[chain1]
+        for res1 in cur_chain1.residues.keys():
+            cur_res1 = cur_chain1[res1]
+            single_count1 = 0
+            if cur_res1.charge == "+":
+                for atom1 in range(cur_res1.atomcount):
+                    if single_count1 != 0:
+                        break
+                    cur_atom1 = cur_res1[atom1+1]
+                    if cur_atom1.sb_able == "+":
+                        for chain2 in complex.chainnames:
+                            cur_chain2 = complex[chain2]
+                            for res2 in cur_chain2.residues.keys():
+                                cur_res2 = cur_chain2[res2]
+                                single_count2 = 0
+                                if cur_res2.charge == "-":
+                                    for atom2 in range(cur_res2.atomcount):
+                                        if single_count2 != 0:
+                                            break
+                                        cur_atom2 = cur_res2[atom2+1]
+                                        if cur_atom2.sb_able == "-":
+                                            dist = atom_dist(cur_atom1, cur_atom2)
+                                            if dist <= cutoff:
+                                                distances.append([chain1, cur_res1.name, cur_res1.index, chain2, cur_res2.name, cur_res2.index, dist])
+                                                single_count2 += 1
+                            
+    return distances
