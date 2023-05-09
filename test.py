@@ -1,47 +1,57 @@
-from structure import *
-from distances import *
-from filters import *
+import structure as st
+import distances as ds
 import pandas as pd
 
 """This is a file which shows how to use my code.
 The basic compoenents of my code so far are:
 1. A structure file (structure.py) defining proteins and/or trajectories
 2. A distance file (distances.py) which defines the distances that can
-    be applied to different residues/atoms.
-3. A filter file (filters.py) which can be used to filter results by whether
-    or not the residue pair might be a good candiate for mutation. Optionally,
-    you can specify a dont_consider file to ignore certain results from the filter."""
+    be applied to different residues/atoms/proteins."""
 
-#First you create a trajectory object, traj.
-#Note, you can read entire trajectories (like with traj2) but this takes a lot of time so I commented it out
-traj = TRAJECTORY("bimc_traj.pdb")
+#You can create a trajectory object, traj which reads a multi-frame pdb file.
+traj = st.TRAJECTORY("bimc_traj.pdb")
 
-#You can also create a complex if you don't want to deal with a trajectory
-cmplx = COMPLEX("6ta4.pdb")
+#You can index by a frame to create a complex.
+frame0 = traj[0]
+print(type(frame0))
 
-#Once you have a trajectory, you need to specify what frame to read. I am reading frame 0 here. Doing so outputs a complex.
-cmplx1 = traj[0]
+#You can also create a complex from a single-frame pdb file if you don't have a trajectory.
+cmplx = st.COMPLEX("6ta4.pdb")
 
-#Once you have a complex, you can specify what chains to apply a distance to.
-#For example, the following line uses the centroid distance (centroid_dist)
-#defined in distances to find all residues which are 7 angstroms apart
-#from chain K. 
-centroid1  = within_dist(cmplx, "K", 7, centroid_dist)
+#Once you read in a file, you can index to obtain chains, complexes, and residues
 
-#From these results, you can filter those pairs which are likely to be good
-#candidates for mutations. Specifically, we care about those pairs for which one
-#residue is charged and the other is neutral. You can optionally
-#input a dont_consider file to ignore certain results (like in filtered_centroid2 below).
-#If you do so, make sure the dont_consider file has exactly the same columnames as the 
-#example.
+#Indexing chains A and B, respectively
+chainA = cmplx["A"]
+chainB = cmplx["B"]
 
-filtered_centroid1 = filter_charged_neutral(centroid1)
-filtered_centroid2 = filter_charged_neutral(centroid1, dont_consider="dont_consider.csv")
+#Indexing residues 1 and 233 from the coresponding chains
+res1 = chainA[1]
+res233 = chainB[233]
 
-print(filtered_centroid1)
-print(filtered_centroid2)
+#Indexing the backbone nitrogen atoms from the coresponding residues
+atomX = res1[0]
+atomY = res233[0]
 
-#Because the output from filter_charged_neutral is a pandas dataframe,
-#you can easily save the dataframe to a csv file.
-filtered_centroid1.to_csv("total_results.csv", index=False)
-filtered_centroid2.to_csv("reduced_results.csv", index=False)
+#Having saved various structure objects in memory, you can find different distances
+
+#Atom distance
+ds.atom_dist(atomX, atomY)
+
+#Residue distances
+ds.sidechain_centroid_dist(res1, res233)
+
+#You can also find all of the pairwise distances from one chain to all the other chains
+#for a cutoff and distance function of your choice.
+info, dist = ds.all_dist(cmplx, "A", 8, ds.sidechain_centroid_dist)
+
+#Also, you can find all existing salt bridges within a complex.
+info, dist = ds.all_salt_bridges(cmplx, 3.2)
+
+#Lastly, you can find all possible mutations for the uncharged residues of a chain which
+#are within the vicinity of charged residue from another chain (measured by an specified residue distance).
+#Optionally, you request that the charged residue not be invovled in any existing salt bridges.
+info, dist = ds.find_putative_sb(cmplx, "K", 7, 3.2, ds.sidechain_centroid_dist, True)
+colnames = ["chain1", "resname1", "resnum1", "chain2", "resname2", "resnum2"]
+results_df = pd.DataFrame(data=info, columns=colnames)
+results_df["sidechain_centroid_dist"] = dist
+results_df.to_csv("results.csv", index=False)

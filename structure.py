@@ -1,155 +1,117 @@
-import subprocess
-import os
+from constants import *
 
-class ATOM:
-    POSATOM = {"ND1", "NE2", "NE", "NH1", "NH2", "NZ"}
-    NEGATOM = {"OD1", "OD2", "OE1", "OE2"}
-    
-    def __init__(self, x:float, y:float, z:float, type: str = None):
+"""
+An atom is the basic building block for all Bridge Builder
+objects. An atom has x/y/z coordinates, a type (based on its parent residue),
+a charge, and a pdb serial number. If a side chain atom has the possibility to be ionized, then it will be
+considered either positve (nitrogen) or negative (oxygen), regardless of the ambient
+conditions. 
+"""
+
+class ATOM:    
+    def __init__(self, x:float, y:float, z:float, pdbpos: int, type: str):
         self.x = x
         self.y = y
         self.z = z
         self.type = type
+        self.pdbpos = pdbpos
         
-        if self.type in self.NEGATOM:
+        if self.type in NEGATOM:
             self.sb_able = "-"
-        elif self.type in self.POSATOM:
+        elif self.type in POSATOM:
             self.sb_able = "+"
         else:
             self.sb_able = "0"
 
+"""A residue is a collection of atoms and represents one of the cannonical
+amino acids. A residue can be postive, negative, or charged
+according to the definitions in constants.py."""
 
 class RESIDUE:
-    CTERATOMS = {"C"}
-    NTERATOMS = {"HN", "N", "HT3"}
-    ALPHAATOM = "CA"
-
-    def __init__(self):
-        self.name = None
-        self.index = None
-        self.charge = None
-        self.atoms = dict()
+    def __init__(self, rname : str, rposition: int):
+        self.name = rname
+        self.index = rposition
+        self.heavyatoms = dict()
         self.atomcount = 0
-        self.atommap = dict()
-        self.sideatoms = dict()
-        self.alpha = None
-
-    def add_atom(self, atom: ATOM, aposition: int):
-        self.atoms[aposition] = atom
-        self.atomcount += 1
-        self.atommap[self.atomcount] = aposition
-
-    def __getitem__(self, key):
-        return self.atoms[self.atommap[key]]
+        self.otheratoms = dict()
+        if self.name in POSITIVE:
+            self.charge = "+"
+        elif (self.name in NEGATIVE):
+            self.charge = "-"
+        elif (self.name in NEUTRAL):
+            self.charge = "0"
+        else:
+            self.charge = None
     
-    def get_alpha(self):
-        for i in range(self.atomcount, 0, -1):
-            if self.atoms[self.atommap[i]].type == self.ALPHAATOM:
-                self.alpha = i
-                break
+    #The internal numbering of the PDB file is stored in the atom object but not used 
+    #to index atoms. Instead, heavy atom numbering is done according to the atom positions outlined
+    #in constants.py. These tend to flow from the atom backbone away to the 
+    #side chain.
+    def add_atom(self, atom: ATOM):
+        if atom.type in HEAVY_ATOM_NAMES:
+            try:
+                aposition = HEAVY_ATOM_POS[self.name].index(atom.type)
+               
+            except:
+                aposition = HEAVY_ATOM_POS_ALT[self.name][atom.type]
+            finally:
+                self.heavyatoms[aposition] = atom
+                self.atomcount += 1
+        #Functionality will be added later for hydrogen numbering.
+        else:
+            self.otheratoms[atom.pdbpos] = atom
 
-    def get_centroid(self):
-        aindex = list(range(self.atomcount))
-        n = len(aindex)
-        x_tot = y_tot = z_tot = 0
-        
-        for i in aindex:
-            cur_atom = self.atoms[self.atommap[i+1]]
-            x_tot += cur_atom.x
-            y_tot += cur_atom.y
-            z_tot += cur_atom.z
-        
-        self.centroidx = x_tot/n
-        self.centroidy = y_tot/n
-        self.centroidz = z_tot/n
-
-    def get_side(self):
-        for i in range(self.atomcount, 0, -1):
-            if self.atoms[self.atommap[i]].type in self.CTERATOMS:
-                continue
-            if self.atoms[self.atommap[i]].type in self.NTERATOMS:
-                break
-            else:
-                self.sideatoms[i] = self.atoms[self.atommap[i]]
-
-    def get_side_centroid(self):
-        self.get_side()
-
-        aindex = sorted(list(self.sideatoms.keys()))
-        n = len(aindex)
-        x_tot = y_tot = z_tot = 0
-        
-        for i in aindex:
-            cur_atom = self.atoms[self.atommap[i]]
-            x_tot += cur_atom.x
-            y_tot += cur_atom.y
-            z_tot += cur_atom.z
-        
-        self.sidecentroidx = x_tot/n
-        self.sidecentroidy = y_tot/n
-        self.sidecentroidz = z_tot/n
-
+    def __getitem__(self, key: int) -> ATOM:
+        if not isinstance(key, int):
+            raise TypeError("You must index atoms by an integer")
+        return self.heavyatoms[key]
+    
+"""Chains are peptides or protein monomers. 
+Residues can be indexed by their pdb file residue indexes."""
 
 class CHAIN:
-
-    positive = {"HIS", "LYS", "ARG"}
-    negative = {"ASP", "GLU"}
-
-    charged = positive | negative
-    neutral = {"GLY", "ALA", "VAL", "LEU", "ILE", "PRO", "MET", "PHE",
-    "TRP", "PRO", "TYR", "GLN", "ASN", "CYS", "THR", "SER"}
-
-    def charge(self, name:str):
-        if name in self.positive:
-            return "+"
-        if name in self.negative:
-            return "-"
-        if name in self.neutral:
-            return "0"
-        else:
-            return None
-
-    def __init__(self):
+    def __init__(self, chainame: str):
         self.residues = dict()
+        self.name = chainame
     
-    def add_residue(self, residue: RESIDUE, rname : str, rposition: int):
-        self.residues[rposition] = residue
-        self.residues[rposition].index = rposition
-        self.residues[rposition].name = rname
-        self.residues[rposition].charge = self.charge(rname)
-    
-    def __getitem__(self, key):
-        return self.residues[key]
+    def add_residue(self, residue: RESIDUE):
+        self.residues[residue.index] = residue
 
+    def __getitem__(self, key: int) -> RESIDUE:
+        if not isinstance(key, int):
+            raise TypeError("You must index residues by an integer")
+        return self.residues[key]
 
 """
 A complex is defined by a single pdb file containing one or more protein chains.
+A complex can be indexed by the chain name.
 """  
-
 class COMPLEX:
+    def add_chain(self, chain: CHAIN):
+        self.chains[chain.name] = chain
+        self.chainnames.append(chain.name)
 
-    def add_chain(self, chain: CHAIN, chainname: str):
-        self.chains[chainname] = chain
-
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> CHAIN:
+        if not isinstance(key, str):
+            raise TypeError("You must index chains by the chain letter")
         return self.chains[key]
 
-    #Creating a COMPLEX directly from a single pdb file or 
-    # from the data passed by the TRAJECTORY class 
+    #Here we create a COMPLEX directly from a single pdb file or 
+    #from the data passed by the TRAJECTORY class. 
     def __init__(self, pdbfile=None, frame_data=None):
-
         self.chains = dict()
-        self.chainnames = self.chains.keys()
+        self.chainnames = []
         
+        #Creating from the single pdb file.
         if pdbfile is not None:
             frame_data = []
-            # self.pdb_clean = ""
             with open(pdbfile, "r") as f:
                 data = f.readlines()
             for line in data:
                 if line[0:4] == "ATOM":
                     frame_data.append(line)
-
+        
+        #Creating from the multi-frame pdb file.
         else:
             tmp_data = []
             for line in frame_data:
@@ -157,6 +119,8 @@ class COMPLEX:
                     tmp_data.append(line)
             frame_data = tmp_data
 
+        #Column defintions from PDB files are used to obtain atom information
+        #and create the COMPLEX.
         for line in frame_data:
             atomnum = int(line[6:11].strip())
             atomtype = line[12:16].strip()
@@ -167,31 +131,32 @@ class COMPLEX:
             y = float(line[38:46].strip())
             z = float(line[46:54].strip())
 
-            cur_atom = ATOM(x, y, z, atomtype)
+            cur_atom = ATOM(x, y, z, atomnum, atomtype)
 
-            no_chain = (not bool(self.chains)) or (chainname not in self.chains.keys())
+            no_chain = (not bool(self.chains)) or (chainname not in self.chainnames)
 
             if no_chain:
-                self.add_chain(CHAIN(), chainname)
+                self.add_chain(CHAIN(chainname))
             
             cur_chain = self.chains[chainname]
 
             no_res = (not bool (cur_chain.residues)) or (resnum not in cur_chain.residues.keys())
 
             if no_res:
-                cur_res = RESIDUE()
-                cur_chain.add_residue(cur_res, resname, resnum)
+                cur_res = RESIDUE(resname, resnum)
+                cur_chain.add_residue(cur_res)
 
-            self.chains[chainname].residues[resnum].add_atom(cur_atom, atomnum)
+            self.chains[chainname].residues[resnum].add_atom(cur_atom)
 
 """
-A trajectory is defined by a multi-pdb file where each frame represents a protein  
+A trajectory is defined by a multi-frame pdb file where each frame represents a protein  
 complex at a specific timestep. Note: trajectories are zero-indexed.
-"""           
+"""
+#Remember to add auxiliary pdb file cleaning functions.           
 class TRAJECTORY:
-    #read_start_points() returns the first line number in a multipdb file for each frame.
-    #Doing so ensures that not the whole multipdb file is read into memory.
-    def read_start_points(self, multipdbfile: str) -> None:
+    #read_start_points() returns the first line number in a multi-frame pdb file for each frame.
+    #Doing so ensures that not the whole multipdb file is read into memory when you create a complex.
+    def read_start_points(self, multipdbfile: str) -> list:
         count = 1
         start_points = [1]
         with open(multipdbfile, "r") as f:
@@ -205,9 +170,9 @@ class TRAJECTORY:
         start_points.pop(-1)
         return start_points
 
-    def read_frame(self, start) -> None:
-        #read_frame() parses the multipdb file at the intervals found by start_points() and returns parsed data
-        #in list form.
+    #read_frame() parses the multipdb file at the intervals found by start_points() and returns parsed data
+    #in list form.
+    def read_frame(self, start) -> list:
         data = []
         
         if len(self.start_points) == 1:
@@ -227,19 +192,22 @@ class TRAJECTORY:
 
         return data
 
-    def __init__(self, multipdbfile:str) -> None:
+    #Remember to add the ability to read more frames into memory.
+    def __init__(self, multipdbfile:str):
         self.filename = multipdbfile
         self.start_points = self.read_start_points(multipdbfile)
         self.frame = 0
         self.add_complex(self.read_frame(self.frame))
 
-    def add_complex(self, data):
+    def add_complex(self, data: list):
         self.complex = COMPLEX(frame_data = data)
         
     def __len__(self):
         return len(self.start_points)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: int) -> COMPLEX:
+        if not isinstance(key, int):
+            raise TypeError("You must index frames by an integer")
         if key == self.frame:
             return self.complex
         
