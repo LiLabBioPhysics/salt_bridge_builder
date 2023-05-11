@@ -2,6 +2,8 @@ from structure import *
 from constants import *
 import numpy as np
 
+"""Atom distance beyond this point"""
+
 #Function returns the Euclidean distance between two atoms
 def atom_dist(atom1:ATOM, atom2:ATOM) -> float:
     x1= atom1.x
@@ -13,16 +15,24 @@ def atom_dist(atom1:ATOM, atom2:ATOM) -> float:
     z2= atom2.z
     return ((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)**(0.5)
 
+"""Residue distances beyond this point"""
+
 #Function returns all pairwise atom distancess for two residues. 
 def pairwise_dist(res1: RESIDUE, res2: RESIDUE) -> np.ndarray:
-    a1index = list(range(res1.atomcount))
-    a2index = list(range(res2.atomcount))
+    atom1is = np.array(list(res1.heavyatoms.keys()))
+    atom2is = np.array(list(res2.heavyatoms.keys()))
 
-    arr = np.zeros((len(a1index), len(a2index)))
+    if np.size(atom1is) == 0 or np.size(atom2is) == 0:
+        raise ValueError("Input residues with at least one atom")
 
-    for i in a1index:
-        for j in a2index:
-            a_dist = atom_dist(res1[i], res2[1])
+    a1c = list(range(res1.atomcount))
+    a2c = list(range(res2.atomcount))
+
+    arr = np.zeros((len(a1c), len(a2c)))
+
+    for i in atom1is:
+        for j in atom2is:
+            a_dist = atom_dist(res1[int(i)], res2[int(j)])
             arr[i,j] = a_dist
 
     return arr
@@ -53,16 +63,19 @@ def sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
 
 #Function returns the Eulidean distance between the centroids of two residues.
 def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
+    atom1is = np.array(list(res1.heavyatoms.keys()))
+    atom2is = np.array(list(res2.heavyatoms.keys()))
+
+    if np.size(atom1is) == 0 or np.size(atom2is) == 0:
+        raise ValueError("Input residues with at least one atom")
+
     ac1 = res1.atomcount
     ac2 = res2.atomcount
-
-    n1 = range(ac1)
-    n2 = range(ac2)
-    
+ 
     x1_tot = y1_tot = z1_tot = x2_tot = y2_tot = z2_tot = 0
         
-    for i in n1:
-        cur_atom = res1[i]
+    for i in atom1is:
+        cur_atom = res1[int(i)]
         x1_tot += cur_atom.x
         y1_tot += cur_atom.y
         z1_tot += cur_atom.z
@@ -71,8 +84,8 @@ def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     c1y = y1_tot/ac1
     c1z = z1_tot/ac1
 
-    for i in n2:
-        cur_atom = res2[i]
+    for i in atom2is:
+        cur_atom = res2[int(i)]
         x2_tot += cur_atom.x
         y2_tot += cur_atom.y
         z2_tot += cur_atom.z
@@ -89,16 +102,19 @@ def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     if res1.name == "GLY" or res2.name == "GLY":
         raise ValueError("The side chain is not defined for glycine")
     
+    atom1is = np.array(list(res1.heavyatoms.keys()))
+    atom2is = np.array(list(res2.heavyatoms.keys()))
+
+    if np.size(atom1is) == 0 or np.size(atom2is) == 0:
+        raise ValueError("Input residues with at least one atom")
+    
     ac1 = res1.atomcount
     ac2 = res2.atomcount
-     
-    n1 = range(4, ac1)
-    n2 = range(4, ac2)
-    
+
     x1_tot = y1_tot = z1_tot = x2_tot = y2_tot = z2_tot = 0
         
-    for i in n1:
-        cur_atom = res1[i]
+    for i in atom1is[atom1is >= SIDE_CHAIN_START]:
+        cur_atom = res1[int(i)]
         x1_tot += cur_atom.x
         y1_tot += cur_atom.y
         z1_tot += cur_atom.z
@@ -108,8 +124,8 @@ def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     c1z = z1_tot/(ac1-SIDE_CHAIN_START)
 
 
-    for i in n2:
-        cur_atom = res2[i]
+    for i in atom2is[atom2is >= SIDE_CHAIN_START]:
+        cur_atom = res2[int(i)]
         x2_tot += cur_atom.x
         y2_tot += cur_atom.y
         z2_tot += cur_atom.z
@@ -119,6 +135,40 @@ def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     c2z = z2_tot/(ac2-SIDE_CHAIN_START)
     
     return ((c2x-c1x)**2+(c2y-c1y)**2+(c2z-c1z)**2)**(0.5)
+
+#Function takes in two residues and outputs their minimum N-O distance
+#if those residues are charged.
+def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    condition1 = (res1.name not in POSITIVE and res2.name not in NEGATIVE)
+    condition2 = (res1.name not in NEGATIVE and res2.name not in POSITIVE)
+    if  condition1 and condition2:
+        raise ValueError("You must input a postive and negative residue")
+    
+    else:
+        atom1is = np.array(list(res1.heavyatoms.keys()))
+        atom2is = np.array(list(res2.heavyatoms.keys()))
+        if np.size(atom1is) == 0 or np.size(atom2is) == 0:
+            raise ValueError("Input residues with at least one atom")
+        
+        distances = []
+        for atom1 in atom1is:
+            cur_atom1 = res1[int(atom1)]
+            if cur_atom1.sb_able == "+":
+                for atom2 in atom2is:
+                    cur_atom2 = res2[int(atom2)]
+                    if cur_atom2.sb_able == "-":
+                        distances.append(atom_dist(cur_atom1, cur_atom2))
+            elif cur_atom1.sb_able =="-":
+                for atom2 in atom2is:
+                    cur_atom2 = res2[int(atom2)]
+                    if cur_atom2.sb_able == "+":
+                        distances.append(atom_dist(cur_atom1, cur_atom2))
+
+        if distances == []:
+            raise ValueError("{} {} and/or {} {} have missing charged atoms.".format(res1.name, res1.index, res2.name, res2.index))
+        return min(distances)
+    
+"""Complex distances beyond this point"""
 
 #Function takes in a complex, a chainname, a cutoff, and a residue distance function as inputs
 #and outputs all of the residue distances from the input chain to all of the other chains
@@ -136,12 +186,15 @@ def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
             chain2 = complex[chainame2]
             for res1i in chain1.residues.keys():
                 cur_res1 = chain1[res1i]
+                if cur_res1.name not in AA:
+                    continue
                 for res2i in chain2.residues.keys():
                     cur_res2 = chain2[res2i]
+                    if cur_res2.name not in AA:
+                        continue
                     cur_dist = centroid_dist(cur_res1, cur_res2)
                     if cur_dist < cutoff + 10:
                         heuristic.append([cur_res1.name, cur_res1.index, cur_res2.name, cur_res2.index, cur_dist, chainame2])
-
 
     for pairs in heuristic:
         chain2 = complex[pairs[5]]
@@ -161,33 +214,6 @@ def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
 
     return info, distances
 
-#Function takes in two residues and outputs their minimum N-O distance
-#if those residues are charged.
-def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
-    condition1 = (res1.name not in POSITIVE and res2.name not in NEGATIVE)
-    condition2 = (res1.name not in NEGATIVE and res2.name not in POSITIVE)
-    if  condition1 and condition2:
-        raise ValueError("You must input a postive and negative residue")
-    
-    else:
-        distances = []
-        for atom1 in range(res1.atomcount):
-            cur_atom1 = res1[atom1]
-            if cur_atom1.sb_able == "+":
-                for atom2 in range(res2.atomcount):
-                    cur_atom2 = res2[atom2]
-                    if cur_atom2.sb_able == "-":
-                        distances.append(atom_dist(cur_atom1, cur_atom2))
-            elif cur_atom1.sb_able =="-":
-                for atom2 in range(res2.atomcount):
-                    cur_atom2 = res2[atom2]
-                    if cur_atom2.sb_able == "+":
-                        distances.append(atom_dist(cur_atom1, cur_atom2))
-
-        if distances == []:
-            raise ValueError("{} {} and/or {} {} have missing charged atoms.".format(res1.name, res1.index, res2.name, res2.index))
-        return min(distances)
-
 #Function returns all salt bridges for a complex, within a cutoff
 def all_salt_bridges(complex: COMPLEX, sb_cutoff:float = 3.2) -> tuple:
     
@@ -198,11 +224,15 @@ def all_salt_bridges(complex: COMPLEX, sb_cutoff:float = 3.2) -> tuple:
         cur_chain1 = complex[chain1]
         for res1 in cur_chain1.residues.keys():
             cur_res1 = cur_chain1[res1]
+            if cur_res1.name not in AA:
+                continue
             if cur_res1.charge == "+":
                     for chain2 in complex.chainnames:
                         cur_chain2 = complex[chain2]
                         for res2 in cur_chain2.residues.keys():
                             cur_res2 = cur_chain2[res2]
+                            if cur_res2.name not in AA:
+                                continue
                             if cur_res2.charge == "-":
                                 try:
                                     dist = NO_dist(cur_res1, cur_res2)

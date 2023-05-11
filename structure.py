@@ -1,4 +1,5 @@
 from constants import *
+import warnings
 
 """
 An atom is the basic building block for all Bridge Builder
@@ -9,13 +10,13 @@ conditions.
 """
 
 class ATOM:    
-    def __init__(self, x:float, y:float, z:float, pdbpos: int, type: str):
+    def __init__(self, x:float, y:float, z:float, pdbpos: int, type: str, alt_location = False):
         self.x = x
         self.y = y
         self.z = z
         self.type = type
         self.pdbpos = pdbpos
-        
+        self.alt_location = alt_location
         if self.type in NEGATOM:
             self.sb_able = "-"
         elif self.type in POSATOM:
@@ -34,6 +35,8 @@ class RESIDUE:
         self.heavyatoms = dict()
         self.atomcount = 0
         self.otheratoms = dict()
+        self.unkownatoms = dict()
+        self.altatoms = dict()
         if self.name in POSITIVE:
             self.charge = "+"
         elif (self.name in NEGATIVE):
@@ -41,6 +44,7 @@ class RESIDUE:
         elif (self.name in NEUTRAL):
             self.charge = "0"
         else:
+            warnings.warn("There is at least one non-cannonical amino acid in the pdb file: {}".format(self.name))
             self.charge = None
     
     #The internal numbering of the PDB file is stored in the atom object but not used 
@@ -48,18 +52,27 @@ class RESIDUE:
     #in constants.py. These tend to flow from the atom backbone away to the 
     #side chain.
     def add_atom(self, atom: ATOM):
-        if atom.type in HEAVY_ATOM_NAMES:
-            try:
-                aposition = HEAVY_ATOM_POS[self.name].index(atom.type)
-               
-            except:
-                aposition = HEAVY_ATOM_POS_ALT[self.name][atom.type]
-            finally:
-                self.heavyatoms[aposition] = atom
-                self.atomcount += 1
-        #Functionality will be added later for hydrogen numbering.
+        if isinstance(atom.alt_location, str):
+            if atom.type in self.altatoms.keys():
+                return None
+            else:
+                self.altatoms[atom.type] = atom.alt_location
+        if self.name not in AA:
+            self.unkownatoms[atom.pdbpos] = atom
         else:
-            self.otheratoms[atom.pdbpos] = atom
+            if atom.type in HEAVY_ATOM_NAMES:
+                try:
+                    aposition = HEAVY_ATOM_POS[self.name].index(atom.type)
+                
+                except:
+                    aposition = HEAVY_ATOM_POS_ALT[self.name][atom.type]
+
+                finally:
+                    self.heavyatoms[aposition] = atom
+                    self.atomcount += 1
+            #Functionality will be added later for hydrogen numbering.
+            else:
+                self.otheratoms[atom.pdbpos] = atom
 
     def __getitem__(self, key: int) -> ATOM:
         if not isinstance(key, int):
@@ -124,6 +137,7 @@ class COMPLEX:
         for line in frame_data:
             atomnum = int(line[6:11].strip())
             atomtype = line[12:16].strip()
+            alt_location = line[16]
             resname = line[17:20]
             chainname = line[21]
             resnum = int(line[22:26].strip())
@@ -131,7 +145,7 @@ class COMPLEX:
             y = float(line[38:46].strip())
             z = float(line[46:54].strip())
 
-            cur_atom = ATOM(x, y, z, atomnum, atomtype)
+            cur_atom = ATOM(x, y, z, atomnum, atomtype, alt_location)
 
             no_chain = (not bool(self.chains)) or (chainname not in self.chainnames)
 
