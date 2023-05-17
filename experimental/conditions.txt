@@ -1,3 +1,0 @@
-has alpha and beta tubulin chains
-has kinesin chain
-has a resolution lower than 8 Angstroms

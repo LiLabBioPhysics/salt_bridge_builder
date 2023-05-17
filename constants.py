@@ -57,5 +57,5 @@ for aa in HEAVY_ATOM_POS:
 #Add definitions for hydrogen atoms
 HYDROGEN_ATOM_POS = None
 
-SIDE_CHAIN_START = 4
+SIDE_CHAIN_START = 3
 ALPHA_CARBON_POS = 3

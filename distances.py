@@ -49,8 +49,6 @@ def alpha_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
 
 #Function returns the minimum distance for all side chain atom pairs between two residues.
 def sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
-    if res1.name == "GLY" or res2.name =="GLY":
-        raise ValueError("The side chain is not defined for glycine")
     n1 = len(HEAVY_ATOM_POS[res1.name][SIDE_CHAIN_START:])
     n2 = len(HEAVY_ATOM_POS[res2.name][SIDE_CHAIN_START:])
     arr = np.empty((n1,n2))
@@ -98,10 +96,7 @@ def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
 
 #Function returns the Euclidean distance between the centroids formed
 #by the side chain atoms of two residues.
-def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
-    if res1.name == "GLY" or res2.name == "GLY":
-        raise ValueError("The side chain is not defined for glycine")
-    
+def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:    
     atom1is = np.array(list(res1.heavyatoms.keys()))
     atom2is = np.array(list(res2.heavyatoms.keys()))
 

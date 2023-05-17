@@ -111,7 +111,7 @@ class COMPLEX:
 
     #Here we create a COMPLEX directly from a single pdb file or 
     #from the data passed by the TRAJECTORY class. 
-    def __init__(self, pdbfile=None, frame_data=None):
+    def __init__(self, pdbfile=None, frame_data=None, memory_data = None):
         self.chains = dict()
         self.chainnames = []
         
@@ -125,13 +125,20 @@ class COMPLEX:
                     frame_data.append(line)
         
         #Creating from the multi-frame pdb file.
-        else:
+        elif frame_data is not None:
             tmp_data = []
             for line in frame_data:
                  if line[0:4] == "ATOM":
                     tmp_data.append(line)
             frame_data = tmp_data
 
+        #Creating from memory
+        if memory_data is not None:
+            frame_data = []
+            for line in memory_data:
+                if line[0:4] == "ATOM":
+                    frame_data.append(line)
+        
         #Column defintions from PDB files are used to obtain atom information
         #and create the COMPLEX.
         for line in frame_data:
