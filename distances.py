@@ -2,6 +2,49 @@ from structure import *
 from constants import *
 import numpy as np
 
+"""Distance building blocks beyond this point"""
+def get_centroid(res: RESIDUE) -> np.array:
+    atomis = np.array(list(res.heavyatoms.keys()))
+    if np.size(atomis) == 0:
+        raise ValueError("Input a residue with at least one atom")
+    
+    x_tot = y_tot = z_tot = 0
+
+    ac = res.atomcount
+
+    for i in atomis:
+        cur_atom = res[int(i)]
+        x_tot += cur_atom.x
+        y_tot += cur_atom.y
+        z_tot += cur_atom.z
+        
+    cx = x_tot/ac
+    cy = y_tot/ac
+    cz = z_tot/ac
+
+    return np.array([cx, cy, cz])
+
+def get_sidechain_centroid(res: RESIDUE) -> np.array:
+    atomis = np.array(list(res.heavyatoms.keys()))
+    if np.size(atomis) == 0:
+        raise ValueError("Input a residue with at least one atom")
+    
+    x_tot = y_tot = z_tot = 0
+
+    ac = res.atomcount
+
+    for i in atomis[atomis >= SIDE_CHAIN_START]:
+        cur_atom = res[int(i)]
+        x_tot += cur_atom.x
+        y_tot += cur_atom.y
+        z_tot += cur_atom.z
+        
+    cx = x_tot/(ac-SIDE_CHAIN_START)
+    cy = y_tot/(ac-SIDE_CHAIN_START)
+    cz = z_tot/(ac-SIDE_CHAIN_START)
+
+    return np.array([cx, cy, cz])
+
 """Atom distance beyond this point"""
 
 #Function returns the Euclidean distance between two atoms
@@ -162,6 +205,36 @@ def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
         if distances == []:
             raise ValueError("{} {} and/or {} {} have missing charged atoms.".format(res1.name, res1.index, res2.name, res2.index))
         return min(distances)
+    
+#Function takes in one complex, a chainname, a resid, a residue distance, and a cutoff and outputs
+#all of those residues that are within the cutoff distance.
+def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: float) -> np.array:
+    distances = []
+    info = []
+    
+    avail_funcs = [minimum_dist, sidechain_dist, centroid_dist, sidechain_centroid_dist, alpha_dist]
+    if func not in avail_funcs:
+        raise Exception("Use one of minimum_dist, alpha_dist, sidechain_dist, centroid_dist, or sidechain_centroid_dist functions")
+    
+    query_res = complex[chainname][resid]
+    
+    for c in complex.chainnames:
+        cur_chain = complex[c]
+        for r in cur_chain.residues.keys():
+            if c == chainname and r == resid:
+                continue
+            cur_res = cur_chain[r]
+
+            dist = func(cur_res, query_res)
+
+            if dist <= cutoff:
+                info.append([c,cur_res.name, cur_res.index])
+                distances.append(dist)
+
+    info = np.array(info)
+    distances = np.array(distances)
+
+    return info, distances
     
 """Complex distances beyond this point"""
 
