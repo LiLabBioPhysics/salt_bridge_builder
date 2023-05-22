@@ -372,3 +372,9 @@ def find_putative_sb(complex: COMPLEX, chainname: str, cutoff: float, sb_cutoff:
     distances = np.array(distances)
 
     return info, distances
+
+"""Data structures beyond this point"""
+
+res_func_dict = {"minimum_distance": minimum_dist, "sidechain_distance": sidechain_dist,
+                "alpha_carbon_distance": alpha_dist, "centroid_distance": centroid_dist,
+                "sidechain_centroid_distance": sidechain_centroid_dist}
