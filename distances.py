@@ -208,7 +208,7 @@ def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
     
 #Function takes in one complex, a chainname, a resid, a residue distance, and a cutoff and outputs
 #all of those residues that are within the cutoff distance.
-def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: float) -> np.array:
+def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: float, uncharged = True) -> np.array:
     distances = []
     info = []
     
@@ -228,8 +228,12 @@ def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: 
             dist = func(cur_res, query_res)
 
             if dist <= cutoff:
-                info.append([c,cur_res.name, cur_res.index])
-                distances.append(dist)
+                if uncharged:
+                    info.append([c,cur_res.name, cur_res.index])
+                    distances.append(dist)
+                elif cur_res.name in CHARGED:
+                    info.append([c,cur_res.name, cur_res.index])
+                    distances.append(dist)
 
     info = np.array(info)
     distances = np.array(distances)
