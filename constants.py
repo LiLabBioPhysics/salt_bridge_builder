@@ -15,6 +15,17 @@ AA = ["ALA", "GLY", "ILE", "LEU", "PRO", "VAL",
       "ARG", "HIS", "HSD", "LYS"
 ]
 
+AA1 = ["A", "G", "I", "L", "P", "V", 
+       "F", "W", "Y",
+       "S", "T",
+       "C", "M",
+       "N", "Q",
+       "D", "E",
+       "R", "H", "H", "K"]
+
+AA_3_1 = dict(zip(AA, AA1))
+AA_1_3 = dict(zip(AA1, AA))
+
 NEUTRAL = set(AA[0:15])
 NEGATIVE = set(AA[15:17])
 POSITIVE = set(AA[17:])
