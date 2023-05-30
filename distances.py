@@ -244,12 +244,12 @@ def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: 
 
 #Function takes in a complex, a chainname, a cutoff, and a residue distance function as inputs
 #and outputs all of the residue distances from the input chain to all of the other chains
-#in the complex.
+#in the complex. This function assumes an CA-CA distance of at most 16.
 def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
     chain1 = complex[chainname1]
-    heuristic = []
-    distances = []
+    interface = []
     info = []
+    distances = []
     avail_funcs = [minimum_dist, sidechain_dist, centroid_dist, sidechain_centroid_dist, alpha_dist]
     if func not in avail_funcs:
         raise Exception("Use one of minimum_dist, alpha_dist, sidechain_dist, centroid_dist, or sidechain_centroid_dist functions")
@@ -264,11 +264,23 @@ def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
                     cur_res2 = chain2[res2i]
                     if cur_res2.name not in AA:
                         continue
-                    cur_dist = centroid_dist(cur_res1, cur_res2)
-                    if cur_dist < cutoff + 10:
-                        heuristic.append([cur_res1.name, cur_res1.index, cur_res2.name, cur_res2.index, cur_dist, chainame2])
+                    cur_dist = alpha_dist(cur_res1, cur_res2)
+                    if cur_dist < INTERFACE_CUTOFF*2:
+                        if func == alpha_dist:
+                            if cur_dist < cutoff:
+                                info.append([chainname1, cur_res1.name, cur_res1.index, chainame2, cur_res2.name, cur_res2.index])
+                                distances.append(cur_dist)
+                        
+                        else:
+                            interface.append([cur_res1.name, cur_res1.index, cur_res2.name, cur_res2.index, cur_dist, chainame2])
+    
+    if func == alpha_dist:
+        info = np.array(info)
+        distances = np.array(distances)
 
-    for pairs in heuristic:
+        return info, distances
+
+    for pairs in interface:
         chain2 = complex[pairs[5]]
         cur_res1 = chain1[pairs[1]]
         cur_res2 = chain2[pairs[3]]

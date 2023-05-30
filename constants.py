@@ -1,3 +1,5 @@
+"""Structure Constants"""
+
 POSATOM = {"ND1", "NE2", "NE", "NH1", "NH2", "NZ"}
 NEGATOM = {"OD1", "OD2", "OE1", "OE2"}
 
@@ -70,3 +72,6 @@ HYDROGEN_ATOM_POS = None
 
 SIDE_CHAIN_START = 3
 ALPHA_CARBON_POS = 3
+
+"""Distance Constants"""
+INTERFACE_CUTOFF = 8
