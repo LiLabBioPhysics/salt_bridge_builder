@@ -3,60 +3,46 @@ from constants import *
 import numpy as np
 
 """Distance building blocks beyond this point"""
-def get_centroid(res: RESIDUE) -> np.array:
+def get_centroid(res: RESIDUE) -> np.ndarray:
     atomis = np.array(list(res.heavyatoms.keys()))
     if np.size(atomis) == 0:
         raise ValueError("Input a residue with at least one atom")
     
-    x_tot = y_tot = z_tot = 0
+    centroid = np.array([0,0,0])
+    
+    for a in res.heavyatoms.values():
+        centroid = centroid + a.coordinates
 
-    ac = res.atomcount
+    centroid = centroid / res.atomcount
 
-    for i in atomis:
-        cur_atom = res[int(i)]
-        x_tot += cur_atom.x
-        y_tot += cur_atom.y
-        z_tot += cur_atom.z
-        
-    cx = x_tot/ac
-    cy = y_tot/ac
-    cz = z_tot/ac
+    return(centroid)
 
-    return np.array([cx, cy, cz])
 
-def get_sidechain_centroid(res: RESIDUE) -> np.array:
+def get_sidechain_centroid(res: RESIDUE) -> np.ndarray:
     atomis = np.array(list(res.heavyatoms.keys()))
     if np.size(atomis) == 0:
         raise ValueError("Input a residue with at least one atom")
     
-    x_tot = y_tot = z_tot = 0
+    sc_centroid = np.array([0,0,0])
+    acount = 0
+    
+    for ai, a in res.heavyatoms.items():
+        if ai >= SIDE_CHAIN_START:
+            sc_centroid = sc_centroid + a.coordinates
+            acount += 1
 
-    ac = res.atomcount
+    sc_centroid = sc_centroid / acount
 
-    for i in atomis[atomis >= SIDE_CHAIN_START]:
-        cur_atom = res[int(i)]
-        x_tot += cur_atom.x
-        y_tot += cur_atom.y
-        z_tot += cur_atom.z
-        
-    cx = x_tot/(ac-SIDE_CHAIN_START)
-    cy = y_tot/(ac-SIDE_CHAIN_START)
-    cz = z_tot/(ac-SIDE_CHAIN_START)
+    return(sc_centroid)
+    
 
-    return np.array([cx, cy, cz])
 
 """Atom distance beyond this point"""
 
 #Function returns the Euclidean distance between two atoms
 def atom_dist(atom1:ATOM, atom2:ATOM) -> float:
-    x1= atom1.x
-    y1= atom1.y
-    z1= atom1.z
-
-    x2= atom2.x
-    y2= atom2.y
-    z2= atom2.z
-    return ((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)**(0.5)
+    diff = atom2.coordinates - atom1.coordinates
+    return (np.linalg.norm(diff))
 
 """Residue distances beyond this point"""
 
@@ -109,33 +95,10 @@ def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
 
     if np.size(atom1is) == 0 or np.size(atom2is) == 0:
         raise ValueError("Input residues with at least one atom")
-
-    ac1 = res1.atomcount
-    ac2 = res2.atomcount
- 
-    x1_tot = y1_tot = z1_tot = x2_tot = y2_tot = z2_tot = 0
-        
-    for i in atom1is:
-        cur_atom = res1[int(i)]
-        x1_tot += cur_atom.x
-        y1_tot += cur_atom.y
-        z1_tot += cur_atom.z
-        
-    c1x = x1_tot/ac1
-    c1y = y1_tot/ac1
-    c1z = z1_tot/ac1
-
-    for i in atom2is:
-        cur_atom = res2[int(i)]
-        x2_tot += cur_atom.x
-        y2_tot += cur_atom.y
-        z2_tot += cur_atom.z
-        
-    c2x = x2_tot/ac2
-    c2y = y2_tot/ac2
-    c2z = z2_tot/ac2
     
-    return ((c2x-c1x)**2+(c2y-c1y)**2+(c2z-c1z)**2)**(0.5)
+    diff = get_centroid(res2) - get_centroid(res1)
+
+    return np.linalg.norm(diff)
 
 #Function returns the Euclidean distance between the centroids formed
 #by the side chain atoms of two residues.
@@ -146,33 +109,9 @@ def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     if np.size(atom1is) == 0 or np.size(atom2is) == 0:
         raise ValueError("Input residues with at least one atom")
     
-    ac1 = res1.atomcount
-    ac2 = res2.atomcount
+    diff = get_sidechain_centroid(res1) - get_sidechain_centroid(res2)
 
-    x1_tot = y1_tot = z1_tot = x2_tot = y2_tot = z2_tot = 0
-        
-    for i in atom1is[atom1is >= SIDE_CHAIN_START]:
-        cur_atom = res1[int(i)]
-        x1_tot += cur_atom.x
-        y1_tot += cur_atom.y
-        z1_tot += cur_atom.z
-        
-    c1x = x1_tot/(ac1-SIDE_CHAIN_START)
-    c1y = y1_tot/(ac1-SIDE_CHAIN_START)
-    c1z = z1_tot/(ac1-SIDE_CHAIN_START)
-
-
-    for i in atom2is[atom2is >= SIDE_CHAIN_START]:
-        cur_atom = res2[int(i)]
-        x2_tot += cur_atom.x
-        y2_tot += cur_atom.y
-        z2_tot += cur_atom.z
-        
-    c2x = x2_tot/(ac2-SIDE_CHAIN_START)
-    c2y = y2_tot/(ac2-SIDE_CHAIN_START)
-    c2z = z2_tot/(ac2-SIDE_CHAIN_START)
-    
-    return ((c2x-c1x)**2+(c2y-c1y)**2+(c2z-c1z)**2)**(0.5)
+    return np.linalg.norm(diff)
 
 #Function takes in two residues and outputs their minimum N-O distance
 #if those residues are charged.
@@ -208,7 +147,7 @@ def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
     
 #Function takes in one complex, a chainname, a resid, a residue distance, and a cutoff and outputs
 #all of those residues that are within the cutoff distance.
-def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: float, uncharged = True) -> np.array:
+def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: float, uncharged = True) -> np.ndarray:
     distances = []
     info = []
     

@@ -67,9 +67,6 @@ for aa in HEAVY_ATOM_POS:
     for a in atom_types:
         HEAVY_ATOM_NAMES.add(a)
 
-#Add definitions for hydrogen atoms
-HYDROGEN_ATOM_POS = None
-
 SIDE_CHAIN_START = 3
 ALPHA_CARBON_POS = 3
 
