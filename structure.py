@@ -106,29 +106,36 @@ class RESIDUE:
         determined by the residue name and atom type (aposition). The positions
         are given in the constants module. The values are ATOM objects.
 
-    atomcount = int
+    atomcount : int
         The number of heavy non-alternate atoms in the residue. Simply,
         just the number of heavy atoms in the residue. Used for calculating
         the centroid.
 
-    otheratoms = dict
+    sideatoms: dict 
+	Similar to heavyatoms but the the only allowable members are side chain
+	atoms.
+
+    sideatomcount: int
+	The number of side chain atoms in the residue.
+
+    otheratoms : dict
         A dictionary where the keys are the PDB numbers of non-cannonical atoms
         (atoms not present in the 20 cannonical amino acids). The values are
         ATOM objects.
 
-    unkownatoms = dict
+    unkownatoms : dict
         A dictionary with information about atoms from unkown residues. Sometimes
         residue identities cannot be established. The unkownatoms dictionary has keys
         whose values are the PDB numbers of atoms. The values are the atom objects.
 
-    altatoms = dict
+    altatoms : dict
         A dictonary with information about alternate atoms.
         When a PDB file is read, if there are alternate atoms, only the first
         is kept as a heavy atom and as an alternate atom. 
         The key is the atom type and the value is the alternate location ATOM
         attribute.
 
-    charge = str
+    charge : str
         Wheather a residue is considered positive, negative, or
         neutral is dependent on the residue name
         and is denoted by +, - , or 0, respectively.
@@ -163,6 +170,8 @@ class RESIDUE:
         self.otheratoms = dict()
         self.unkownatoms = dict()
         self.altatoms = dict()
+        self.sideatoms = dict()
+        self.sideatomcount = 0
         if self.name in POSITIVE:
             self.charge = "+"
         elif (self.name in NEGATIVE):
@@ -206,6 +215,9 @@ class RESIDUE:
                     #Most atoms should be added here.
                     self.heavyatoms[aposition] = atom
                     self.atomcount += 1
+                    if aposition >= SIDE_CHAIN_START:
+                        self.sideatoms[aposition] = atom
+                        self.sideatomcount += 1
             #Functionality will be added later for hydrogen numbering.
             else:
                 self.otheratoms[atom.pdbpos] = atom

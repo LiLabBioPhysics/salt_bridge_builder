@@ -19,23 +19,19 @@ def get_centroid(res: RESIDUE) -> np.ndarray:
 
 
 def get_sidechain_centroid(res: RESIDUE) -> np.ndarray:
-    atomis = np.array(list(res.heavyatoms.keys()))
+    atomis = np.array(list(res.sideatoms.keys()))
     if np.size(atomis) == 0:
-        raise ValueError("Input a residue with at least one atom")
+        raise ValueError("Input a residue with at least one side chain atom")
     
     sc_centroid = np.array([0,0,0])
-    acount = 0
     
-    for ai, a in res.heavyatoms.items():
-        if ai >= SIDE_CHAIN_START:
-            sc_centroid = sc_centroid + a.coordinates
-            acount += 1
+    for a in res.sideatoms.values():
+        sc_centroid = sc_centroid + a.coordinates
 
-    sc_centroid = sc_centroid / acount
+    sc_centroid = sc_centroid / res.sideatomcount
 
     return(sc_centroid)
     
-
 
 """Atom distance beyond this point"""
 
@@ -47,29 +43,42 @@ def atom_dist(atom1:ATOM, atom2:ATOM) -> float:
 """Residue distances beyond this point"""
 
 #Function returns all pairwise atom distancess for two residues. 
-def pairwise_dist(res1: RESIDUE, res2: RESIDUE) -> np.ndarray:
+def pairwise_dist(res1: RESIDUE, res2: RESIDUE) -> set:
     atom1is = np.array(list(res1.heavyatoms.keys()))
     atom2is = np.array(list(res2.heavyatoms.keys()))
 
     if np.size(atom1is) == 0 or np.size(atom2is) == 0:
         raise ValueError("Input residues with at least one atom")
-
-    a1c = list(range(res1.atomcount))
-    a2c = list(range(res2.atomcount))
-
-    arr = np.zeros((len(a1c), len(a2c)))
+    
+    pairwise_set = set()
 
     for i in atom1is:
         for j in atom2is:
-            a_dist = atom_dist(res1[int(i)], res2[int(j)])
-            arr[i,j] = a_dist
+            a_dist = float(atom_dist(res1[int(i)], res2[int(j)]))
+            pairwise_set.add(a_dist)
 
-    return arr
+    return pairwise_set
+
+#Function returns all pairwise side chain atom distancess for two residues. 
+def pairwise_sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> set:
+    atom1is = np.array(list(res1.sideatoms.keys()))
+    atom2is = np.array(list(res2.sideatoms.keys()))
+
+    if np.size(atom1is) == 0 or np.size(atom2is) == 0:
+        raise ValueError("Input residues with at least one side chain atom")
+
+    side_set = set()
+
+    for i in atom1is:
+        for j in atom2is:
+            a_dist = float(atom_dist(res1[int(i)], res2[int(j)]))
+            side_set.add(a_dist)
+    return side_set
 
 #Function returns the minimum pairwise distance for two residues.
-def minimum_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
-    pairwise_arr = pairwise_dist(res1, res2)
-    return np.min(pairwise_arr)
+def minimum_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    pairwise_set = pairwise_dist(res1, res2)
+    return min(pairwise_set)
 
 #Function returns the alpha carbon distance between two residues.
 def alpha_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
@@ -77,16 +86,9 @@ def alpha_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     return dist
 
 #Function returns the minimum distance for all side chain atom pairs between two residues.
-def sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
-    n1 = len(HEAVY_ATOM_POS[res1.name][SIDE_CHAIN_START:])
-    n2 = len(HEAVY_ATOM_POS[res2.name][SIDE_CHAIN_START:])
-    arr = np.empty((n1,n2))
-
-    for i in range(n1):
-        for j in range(n2):
-            arr[i,j] = atom_dist(res1[i+SIDE_CHAIN_START], res2[j+SIDE_CHAIN_START])
-    
-    return np.min(arr)
+def sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    side_set = pairwise_sidechain_dist(res1, res2) 
+    return min(side_set)
 
 #Function returns the Eulidean distance between the centroids of two residues.
 def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
