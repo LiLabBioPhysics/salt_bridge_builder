@@ -1,9 +1,51 @@
+"""
+The distances module contains definitions for all residue distances.
+It also contains various useful utility functions.
+"""
+
 from structure import *
 from constants import *
 import numpy as np
 
-"""Distance building blocks beyond this point"""
+
+def atom_dist(atom1:ATOM, atom2:ATOM) -> float:
+    """
+    Parameters
+    ----------
+
+    atmo1 : ATOM
+        The first atom.
+
+    
+    atmo2 : ATOM
+        The second atom.
+    
+    Returns
+    ------
+    float
+        Euclidean distance between two atoms (points).
+    """
+    diff = atom2.coordinates - atom1.coordinates
+    return (np.linalg.norm(diff))
+
 def get_centroid(res: RESIDUE) -> np.ndarray:
+    """
+    Parameters
+    ----------
+
+    res : RESIDUE
+        The residue for which the centroid is calculated.
+    
+    Raises
+    ------
+    ValueError
+        If the residue does not have at least one atom.
+
+    Returns
+    ------
+    np.ndarray
+        The residue centroid.
+    """
     atomis = np.array(list(res.heavyatoms.keys()))
     if np.size(atomis) == 0:
         raise ValueError("Input a residue with at least one atom")
@@ -19,6 +61,23 @@ def get_centroid(res: RESIDUE) -> np.ndarray:
 
 
 def get_sidechain_centroid(res: RESIDUE) -> np.ndarray:
+    """
+    Parameters
+    ----------
+
+    res : RESIDUE
+        The residue for which the side chain centroid is calculated.
+    
+    Raises
+    ------
+    ValueError
+        If the residue does not have at least one side chain atom.
+
+    Returns
+    ------
+    np.ndarray
+        The residue side chain centroid.
+    """
     atomis = np.array(list(res.sideatoms.keys()))
     if np.size(atomis) == 0:
         raise ValueError("Input a residue with at least one side chain atom")
@@ -31,19 +90,28 @@ def get_sidechain_centroid(res: RESIDUE) -> np.ndarray:
     sc_centroid = sc_centroid / res.sideatomcount
 
     return(sc_centroid)
-    
 
-"""Atom distance beyond this point"""
 
-#Function returns the Euclidean distance between two atoms
-def atom_dist(atom1:ATOM, atom2:ATOM) -> float:
-    diff = atom2.coordinates - atom1.coordinates
-    return (np.linalg.norm(diff))
-
-"""Residue distances beyond this point"""
-
-#Function returns all pairwise atom distancess for two residues. 
 def pairwise_dist(res1: RESIDUE, res2: RESIDUE) -> set:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+    
+    Raises
+    ------
+    ValueError
+        If the residues do not have at least one atom.
+
+    Returns
+    ------
+    set
+        Pairwise atom distances are calculated between all atoms. A set of these floats is returned.
+    """
     atom1is = np.array(list(res1.heavyatoms.keys()))
     atom2is = np.array(list(res2.heavyatoms.keys()))
 
@@ -59,8 +127,26 @@ def pairwise_dist(res1: RESIDUE, res2: RESIDUE) -> set:
 
     return pairwise_set
 
-#Function returns all pairwise side chain atom distancess for two residues. 
 def pairwise_sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> set:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+    
+    Raises
+    ------
+    ValueError
+        If the residues do not have at least one atom.
+
+    Returns
+    ------
+    set
+        Pairwise atom distances for side chain atoms are calculated. A set of these floats is returned.
+    """
     atom1is = np.array(list(res1.sideatoms.keys()))
     atom2is = np.array(list(res2.sideatoms.keys()))
 
@@ -75,23 +161,75 @@ def pairwise_sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> set:
             side_set.add(a_dist)
     return side_set
 
-#Function returns the minimum pairwise distance for two residues.
 def minimum_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+
+    Returns
+    ------
+    float
+        Pairwise atom distances for all atoms are calculated. The minimum value of this set is returned.
+    """
     pairwise_set = pairwise_dist(res1, res2)
     return min(pairwise_set)
 
-#Function returns the alpha carbon distance between two residues.
-def alpha_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
-    dist = atom_dist(res1[ALPHA_CARBON_POS], res2[ALPHA_CARBON_POS])
-    return dist
-
-#Function returns the minimum distance for all side chain atom pairs between two residues.
 def sidechain_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+
+    Returns
+    ------
+    float
+        Pairwise atom distances for side chain atoms are calculated. The minimum value of this set is returned.
+    """
     side_set = pairwise_sidechain_dist(res1, res2) 
     return min(side_set)
 
-#Function returns the Eulidean distance between the centroids of two residues.
-def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
+def alpha_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+
+    Returns
+    ------
+    float
+        The alpha carbon distance between two residues.
+    """
+    dist = atom_dist(res1[ALPHA_CARBON_POS], res2[ALPHA_CARBON_POS])
+    return float(dist)
+
+def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+
+    Returns
+    ------
+    float
+        Function returns the Eulidean distance between the centroids of two residues.
+    """
     atom1is = np.array(list(res1.heavyatoms.keys()))
     atom2is = np.array(list(res2.heavyatoms.keys()))
 
@@ -100,11 +238,23 @@ def centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
     
     diff = get_centroid(res2) - get_centroid(res1)
 
-    return np.linalg.norm(diff)
+    return float(np.linalg.norm(diff))
 
-#Function returns the Euclidean distance between the centroids formed
-#by the side chain atoms of two residues.
-def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:    
+def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+
+    Returns
+    ------
+    float
+        Function returns the Eulidean distance between the side chain centroids of two residues.
+    """    
     atom1is = np.array(list(res1.heavyatoms.keys()))
     atom2is = np.array(list(res2.heavyatoms.keys()))
 
@@ -115,9 +265,26 @@ def sidechain_centroid_dist(res1: RESIDUE, res2: RESIDUE) -> np.float64:
 
     return np.linalg.norm(diff)
 
-#Function takes in two residues and outputs their minimum N-O distance
-#if those residues are charged.
 def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
+    """
+    Parameters
+    ----------
+    res1 : RESIDUE
+        The first residue.
+
+    res1 : RESIDUE
+        The second residue.
+    
+    Raises
+    ------
+    ValueError
+        If the residues are not charged or if there is not at least one charged atom in both residues.
+
+    Returns
+    ------
+    float
+        The minimum value of a set of pairwise differences between charged side chain atoms.
+    """
     condition1 = (res1.name not in POSITIVE and res2.name not in NEGATIVE)
     condition2 = (res1.name not in NEGATIVE and res2.name not in POSITIVE)
     if  condition1 and condition2:
@@ -129,27 +296,60 @@ def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
         if np.size(atom1is) == 0 or np.size(atom2is) == 0:
             raise ValueError("Input residues with at least one atom")
         
-        distances = []
+        distances = {}
         for atom1 in atom1is:
             cur_atom1 = res1[int(atom1)]
             if cur_atom1.sb_able == "+":
                 for atom2 in atom2is:
                     cur_atom2 = res2[int(atom2)]
                     if cur_atom2.sb_able == "-":
-                        distances.append(atom_dist(cur_atom1, cur_atom2))
+                        distances.add(atom_dist(cur_atom1, cur_atom2))
             elif cur_atom1.sb_able =="-":
                 for atom2 in atom2is:
                     cur_atom2 = res2[int(atom2)]
                     if cur_atom2.sb_able == "+":
-                        distances.append(atom_dist(cur_atom1, cur_atom2))
+                        distances.add(atom_dist(cur_atom1, cur_atom2))
 
-        if distances == []:
+        if distances == {}:
             raise ValueError("{} {} and/or {} {} have missing charged atoms.".format(res1.name, res1.index, res2.name, res2.index))
         return min(distances)
     
-#Function takes in one complex, a chainname, a resid, a residue distance, and a cutoff and outputs
-#all of those residues that are within the cutoff distance.
-def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: float, uncharged = True) -> np.ndarray:
+def within_distance(complex: COMPLEX, chainname: str, resid: int, func: function, cutoff: float, uncharged = True) -> tuple:
+    """
+    Parameters
+    ----------
+    complex : COMPLEX
+        The complex to iterate over.
+
+    chainname : str
+        The query chain.
+
+    resid : res
+        The query residue index.
+
+    func : function
+        The function used to calculate residue distances.
+
+    cutoff : float
+        The residue distance cutoff.
+
+    uncharged : bool
+        Weather to include uncharged residues in the output.
+    
+    Raises
+    ------
+    Exception
+        If the chosen distance is not defined.
+
+    Returns
+    ------
+    tuple
+        A tuple of values where where the two objects in the tuple are information and distance np.ndarrays.
+        The objects represent all residues which are within the cutoff distance to the query residue.
+        The information array contains information about the chain name, residue name, and reside index.
+        The distance array contains the residue distances/s.
+    """
+
     distances = []
     info = []
     
@@ -180,13 +380,38 @@ def within_distance(complex: COMPLEX, chainname: str, resid: int, func, cutoff: 
     distances = np.array(distances)
 
     return info, distances
-    
-"""Complex distances beyond this point"""
 
-#Function takes in a complex, a chainname, a cutoff, and a residue distance function as inputs
-#and outputs all of the residue distances from the input chain to all of the other chains
-#in the complex. This function assumes an CA-CA distance of at most 16.
 def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
+    """
+    Parameters
+    ----------
+    complex : COMPLEX
+        The complex to iterate over.
+
+    chainname1 : str
+        The query chain.
+
+    cutoff : float
+        The residue distance cutoff.
+
+    func : function
+        The function used to calculate residue distances.
+    
+    Raises
+    ------
+    Exception
+        If the chosen distance is not defined.
+
+    Returns
+    ------
+    tuple
+        A tuple of values where where the two objects in the tuple are information and distance np.ndarrays.
+        The objects represent all pairiwise residue distances from all residues in the query chain to all residues in all other chains.
+        All residues are within the residue distance cutoff. An alpha carbon distance of 16 Å is used to shortlist residue distances.
+        The information array contains information about the chain names, residue names, and reside indexes. 
+        The first three columns represent the query residues. The last three columns represent all other chains.
+        The distance array contains the residue distances/s.
+    """
     chain1 = complex[chainname1]
     interface = []
     info = []
@@ -239,8 +464,25 @@ def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
 
     return info, distances
 
-#Function returns all salt bridges for a complex, within a cutoff
 def all_salt_bridges(complex: COMPLEX, sb_cutoff:float = 3.2) -> tuple:
+    """
+    Parameters
+    ----------
+    complex : COMPLEX
+        The complex to iterate over.
+
+    sb_cutoff : float
+        The salt bridge distance cutoff.
+
+    Returns
+    ------
+    tuple
+        A tuple of values where where the two objects in the tuple are information and distance np.ndarrays.
+        The objects represent all salt bridges in the complex (including intraprotein salt bridges).
+        The information array contains information about the chain names, residue names, and reside indexes. 
+        The first three columns represent the query residues. The last three columns represent all other chains.
+        The distance array contains the residue distances/s.
+    """
     
     distances = []
     info = []
@@ -278,6 +520,41 @@ def all_salt_bridges(complex: COMPLEX, sb_cutoff:float = 3.2) -> tuple:
 #Optionally, the user can specify that the charged residues must not be involved in potential
 #salt bridges. 
 def find_putative_sb(complex: COMPLEX, chainname: str, cutoff: float, sb_cutoff: float, func, mind_sb=True) -> tuple:
+    """
+    Parameters
+    ----------
+    complex : COMPLEX
+        The complex to iterate over.
+
+    chainname1 : str
+        The query chain.
+
+    cutoff : float
+        The residue distance cutoff.
+
+    sb_cutoff : float
+        The salt bridge distance cutoff.
+
+    func : function
+        The function used to calculate residue distances.
+
+    mind_sb : bool
+        Whether to disregard those putative salt bridges where the wild-type charged residue is already involved in a salt bridge. 
+    
+    Raises
+    ------
+    Exception
+        If the chosen distance is not defined.
+
+    Returns
+    ------
+    tuple
+        A tuple of values where where the two objects in the tuple are information and distance np.ndarrays.
+        The objects represent putative salt bridges based on the residue distance cutoff.
+        The information array contains information about the chain names, residue names, and reside indexes. 
+        The first three columns represent the query residues. The last three columns represent all other chains.
+        The distance array contains the residue distances/s.
+    """
     info = []
     distances = []
 
@@ -329,8 +606,6 @@ def find_putative_sb(complex: COMPLEX, chainname: str, cutoff: float, sb_cutoff:
     distances = np.array(distances)
 
     return info, distances
-
-"""Data structures beyond this point"""
 
 res_func_dict = {"minimum_distance": minimum_dist, "sidechain_distance": sidechain_dist,
                 "alpha_carbon_distance": alpha_dist, "centroid_distance": centroid_dist,
