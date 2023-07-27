@@ -431,9 +431,9 @@ def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
                     if cur_res2.name not in AA:
                         continue
                     cur_dist = alpha_dist(cur_res1, cur_res2)
-                    if cur_dist < INTERFACE_CUTOFF*2:
+                    if cur_dist <= INTERFACE_CUTOFF*2:
                         if func == alpha_dist:
-                            if cur_dist < cutoff:
+                            if cur_dist <= cutoff:
                                 info.append([chainname1, cur_res1.name, cur_res1.index, chainame2, cur_res2.name, cur_res2.index])
                                 distances.append(cur_dist)
                         
@@ -454,7 +454,7 @@ def all_dist(complex:COMPLEX, chainname1: str, cutoff: float, func) -> tuple:
             cur_dist = func(cur_res1, cur_res2)
         except:
             continue
-        if cur_dist < cutoff:
+        if cur_dist <= cutoff:
             info.append([chainname1,cur_res1.name, cur_res1.index, pairs[5], cur_res2.name, cur_res2.index])
             
             distances.append(cur_dist)

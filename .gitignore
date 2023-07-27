@@ -10,6 +10,7 @@ centroid_traj.py
 __init__.py
 ./ipynb_checkpoints/
 *.ipynb
+!Complete_Workflow.ipynb
 aa_map.csv
 all_sb.csv
 destable.csv
@@ -23,3 +24,5 @@ vmd_sb/
 reduced_results.csv
 total_results.csv
 all_distances.png
+S2.xlsx
+stability_mutations/
