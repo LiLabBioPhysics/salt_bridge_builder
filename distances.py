@@ -6,6 +6,7 @@ It also contains various useful utility functions.
 from structure import *
 from constants import *
 import numpy as np
+from typing import Callable
 
 
 def atom_dist(atom1:ATOM, atom2:ATOM) -> float:
@@ -296,7 +297,7 @@ def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
         if np.size(atom1is) == 0 or np.size(atom2is) == 0:
             raise ValueError("Input residues with at least one atom")
         
-        distances = {}
+        distances = set()
         for atom1 in atom1is:
             cur_atom1 = res1[int(atom1)]
             if cur_atom1.sb_able == "+":
@@ -310,11 +311,11 @@ def NO_dist(res1: RESIDUE, res2: RESIDUE) -> float:
                     if cur_atom2.sb_able == "+":
                         distances.add(atom_dist(cur_atom1, cur_atom2))
 
-        if distances == {}:
+        if distances == set():
             raise ValueError("{} {} and/or {} {} have missing charged atoms.".format(res1.name, res1.index, res2.name, res2.index))
         return min(distances)
     
-def within_distance(complex: COMPLEX, chainname: str, resid: int, func: function, cutoff: float, uncharged = True) -> tuple:
+def within_distance(complex: COMPLEX, chainname: str, resid: int, func: Callable[[RESIDUE, RESIDUE] , float], cutoff: float, uncharged = True) -> tuple:
     """
     Parameters
     ----------
@@ -487,6 +488,7 @@ def all_salt_bridges(complex: COMPLEX, sb_cutoff:float = 3.2) -> tuple:
     distances = []
     info = []
 
+
     for chain1 in complex.chainnames:
         cur_chain1 = complex[chain1]
         for res1 in cur_chain1.residues.keys():
@@ -508,8 +510,6 @@ def all_salt_bridges(complex: COMPLEX, sb_cutoff:float = 3.2) -> tuple:
                                         distances.append(dist)
                                 except Exception as e:
                                     continue
-
-
     distances = np.array(distances)
     info = np.array(info)
 
