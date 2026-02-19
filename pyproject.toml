@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "__init__.py",
+  "constants.py",
+  "structure.py",
+  "distances.py",
+]
+
+
+[tool.hatch.build.targets.wheel]
+include = [
+  "__init__.py",
+  "constants.py",
+  "structure.py",
+  "distances.py",
+]
+
+[project]
+name = "sbb"
+version = "0.0.1"
+dependencies = [
+  "numpy>=2",
+  "pandas>=3",
+]
+requires-python = ">=3.12"
+authors = [
+  {name = "Jason Sanchez", email = "jesanchez15@utep.edu"}
+]
+maintainers = [
+  {name = "Jason Sanchez", email = "jesanchez15@utep.edu"}
+]
+description = "A Software Package to Identify Putative Salt-Bridge-Building Mutation Sites"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICEN[CS]E.*"]
+keywords = ["Electrostatics", "Protein-Protein Interactions", "Salt Bridges", "Protein Engineering"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+
+[project.urls]
+Repository = "https://github.com/LiLabBioPhysics/salt_bridge_builder"

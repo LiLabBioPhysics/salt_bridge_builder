@@ -1,0 +1,7 @@
+name: sbb
+channels:
+  - defaults
+dependencies:
+  - pip:
+      - numpy==2.4.2
+      - pandas==3.0.1
