@@ -4,10 +4,14 @@
 </p>
 </h1>
 
-[![Requires Python 3.12+](https://img.shields.io/badge/Python-3.12+-blue.svg?logo=python&logoColor=white)](https://python.org/downloads)
+
+[![PyPI Latest Release](https://img.shields.io/pypi/v/sbb.svg)](https://pypi.org/project/sbb/)
 
 # Salt Bridge Builder
 Salt Bridge Builder (SBB) is a python-based tool that identifies uncharged-to-charged mutations that result in interprotein salt bridges.
+
+# Version
+The current iteration of SBB is 0.0.1, with current functionality focusing on identifying salt-bridge-building mutations. Future iterations will assess salt bridge stability and contribution to binding.
 
 ## Table of Contents
 - [Dependencies](#dependencies)
