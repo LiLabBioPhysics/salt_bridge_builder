@@ -26,6 +26,7 @@ This project uses the following main dependencies:
 ## Installation
 
 The preferred method installing python and pip is via the [conda website](https://conda.io).
+Once conda is downloaded, a suitable environment can be created and the SBB package can be installed via pip.
 
 ```bash
 conda create -n sbb-env python=3.12 pip=26
