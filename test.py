@@ -13,7 +13,6 @@ traj = st.TRAJECTORY("bimc_traj.pdb")
 
 #You can index by a frame to create a complex.
 frame0 = traj[0]
-print(type(frame0))
 
 #You can also create a complex from a single-frame pdb file if you don't have a trajectory.
 cmplx = st.COMPLEX("6ta4.pdb")
