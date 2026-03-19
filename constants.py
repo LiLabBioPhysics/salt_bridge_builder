@@ -13,8 +13,8 @@ AA = ["ALA", "GLY", "ILE", "LEU", "PRO", "VAL",
       "SER", "THR", 
       "CYS", "MET",
       "ASN", "GLN",
-      "ASP", "GLU",
-      "ARG", "HIS", "HSD", "LYS"
+      "ASP", "GLU", #Negative
+      "ARG", "HIS", "HID", "HIE", "HIP", "HSD", "HSE", "HSP", "LYS" #Positive
 ]
 
 AA1 = ["A", "G", "I", "L", "P", "V", 
@@ -22,8 +22,8 @@ AA1 = ["A", "G", "I", "L", "P", "V",
        "S", "T",
        "C", "M",
        "N", "Q",
-       "D", "E",
-       "R", "H", "H", "K"]
+       "D", "E", #Negative
+       "R", "H", "H", "H", "H", "H", "H", "H" "K"] #Positive
 
 AA_3_1 = dict(zip(AA, AA1))
 AA_1_3 = dict(zip(AA1, AA))
@@ -53,8 +53,13 @@ HEAVY_ATOM_POS = {
     AA[16]:["N", "C", "O", "CA", "CB", "CG", "CD", "OE1", "OE2"], #GLU
     AA[17]:["N", "C", "O", "CA", "CB", "CG", "CD", "NE", "CZ", "NH1", "NH2"], #ARG
     AA[18]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HIS
-    AA[19]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HSD
-    AA[20]:["N", "C", "O", "CA", "CB", "CG", "CD", "CE", "NZ"], #LYS
+    AA[19]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HID
+    AA[20]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HIE
+    AA[21]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HIP
+    AA[22]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HSD
+    AA[23]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HSE
+    AA[24]:["N", "C", "O", "CA", "CB", "CG", "ND1", "CD2", "CE1", "NE2"], #HSP
+    AA[25]:["N", "C", "O", "CA", "CB", "CG", "CD", "CE", "NZ"], #LYS
 }
 
 HEAVY_ATOM_POS_ALT = {
